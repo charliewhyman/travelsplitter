@@ -7,6 +7,8 @@ export default function IndexPage() {
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (session) {
             router.replace('/(auth)/login')
+          } else {
+            console.log('no user')
           }
         })
     

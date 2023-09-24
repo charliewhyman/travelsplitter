@@ -33,7 +33,6 @@ export default function Auth() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerShown: true, headerBackVisible: false, title: "TravelSplitter", }}/>
         <View style={[styles.verticallySpaced]}>
         <TextInput style={styles.TextInput}
           onChangeText={(text) => setEmail(text)}
