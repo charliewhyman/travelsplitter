@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View, TextInput, Button } from 'react-native'
 import { supabase } from '../lib/supabase'
+import { Stack } from 'expo-router'
+
 
 export default function Auth() {
   const [email, setEmail] = useState('')
@@ -31,7 +33,8 @@ export default function Auth() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.verticallySpaced]}>
+      <Stack.Screen options={{headerShown: true, headerBackVisible: false, title: "TravelSplitter", }}/>
+        <View style={[styles.verticallySpaced]}>
         <TextInput style={styles.TextInput}
           onChangeText={(text) => setEmail(text)}
           value={email}
@@ -74,6 +77,7 @@ const styles = StyleSheet.create({
   },
   TextInput: {
     borderColor: '#ffffff',
+    color: '#d3d3d3',
     borderRadius: 4,
     borderStyle: 'solid',
     borderWidth: 1,
