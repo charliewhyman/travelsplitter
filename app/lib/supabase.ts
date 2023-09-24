@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store'
 import { createClient } from '@supabase/supabase-js'
 
 
-// fromhttps://supabase.com/docs/guides/getting-started/tutorials/with-expo
+// from https://supabase.com/docs/guides/getting-started/tutorials/with-expo
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
