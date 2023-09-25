@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 
 export default function AuthLayout() {
     return (
-      <Stack screenOptions={{headerShown: true, title: 'TravelSplitter', headerBackVisible: false}}>
-      </Stack>
+      <Stack/>
     )
 }

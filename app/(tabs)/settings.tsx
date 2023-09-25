@@ -1,9 +1,10 @@
-import { Alert, StyleSheet } from 'react-native';
+import { Alert, Button, StyleSheet } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { Stack, router } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsPage() {
 
@@ -17,11 +18,22 @@ export default function SettingsPage() {
         Alert.alert("Unable to access user")
       }
     })
-  }, [])
+  }, []);
+
+  const logout = async () => {
+    const {error} = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert("Sign out error", error.message);
+    }
+  }
 
   return (
-    <View>
-      <Stack.Screen options={{ headerShown: true, title: "Settings"}}/>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Stack.Screen options={{ headerShown: true, title: "Settings"}}/>
+        <Text>Current User: {user?.email}</Text>
+        <Button title="Sign out" onPress={() => logout()} />
+      </View>
+    </SafeAreaView>
   );
 }
