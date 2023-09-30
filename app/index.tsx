@@ -6,7 +6,7 @@ export default function IndexPage() {
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (session) {
-            router.replace('/(auth)/login')
+            router.replace('/(tabs)/home')
           } else {
             console.log('no user')
           }
@@ -20,7 +20,5 @@ export default function IndexPage() {
             }
         
         })
-      }, [])
-
-    return <Redirect href={"/(auth)/login"}/>
+      }, []);
 }
