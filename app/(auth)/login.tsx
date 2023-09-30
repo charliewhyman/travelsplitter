@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View, TextInput, Button } from 'react-native'
 import { supabase } from '../lib/supabase'
-import { Stack } from 'expo-router'
-
 
 export default function Auth() {
   const [email, setEmail] = useState('')
@@ -34,13 +32,13 @@ export default function Auth() {
   return (
     <View style={styles.container}>
         <View style={[styles.verticallySpaced]}>
-        <TextInput style={styles.TextInput}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize={'none'}
-          inputMode='email'
-        />
+          <TextInput style={styles.TextInput}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+            placeholder="email@address.com"
+            autoCapitalize={'none'}
+            inputMode='email'
+          />
       </View>
       <View style={styles.verticallySpaced}>
         <TextInput style={styles.TextInput}

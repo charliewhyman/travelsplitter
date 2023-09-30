@@ -1,4 +1,4 @@
-import { router, Redirect } from "expo-router";
+import { router } from "expo-router";
 import { useEffect } from "react";
 import { supabase } from "./lib/supabase";
 

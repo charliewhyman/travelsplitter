@@ -1,6 +1,6 @@
-import { Alert, Button, StyleSheet } from 'react-native';
+import { Alert, Button } from 'react-native';
 import { Text, View } from '../../components/Themed';
-import { Stack, router } from 'expo-router';
+import { Stack } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
