@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
+import Avatar from '../../components/Avatar'
 
 export default function Account() {
   const [loading, setLoading] = useState(true)
@@ -40,7 +41,6 @@ export default function Account() {
         .eq('id', sessionData.user.id)
         .single()
 
-      console.log( {data, status})
       if (error && status !== 406) {
         throw error
       }
@@ -60,7 +60,6 @@ export default function Account() {
 
   async function updateProfile({
     username,
-    
     avatar_url,
   }: {
     username: string
@@ -78,7 +77,6 @@ export default function Account() {
       }
 
       let { error } = await supabase.from('profiles').upsert(updates)
-      console.log({ error } )
 
       if (error) {
         throw error
@@ -93,7 +91,16 @@ export default function Account() {
   }
 
   return (
+    
     <View style={styles.container}>
+      <Avatar
+          size={200}
+          url={avatarUrl}
+          onUpload={(url: string) => {
+            setAvatarUrl(url)
+            updateProfile({ username, avatar_url: url })
+          }}
+        />
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input label="Email" value={session?.user?.email} disabled />
       </View>
