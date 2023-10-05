@@ -1,0 +1,43 @@
+import { Button, FlatList, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { supabase } from '../app/lib/supabase';
+import { View, Text } from './Themed';
+import { Session } from '@supabase/supabase-js'
+
+export default function Groups() {
+  const [groups, setGroups] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let { data: groupsData, error } = await supabase
+          .from('groups')
+          .select(`
+            id,
+            name,
+            slug
+          `);
+
+        if (error) {
+          console.error('Error fetching groups: ', error.message);
+        } else {
+          setGroups(groupsData || []);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error fetching groups: ', error.message);
+        }
+      }
+    }
+
+    fetchData();
+  }, []); // Run this effect only once, similar to componentDidMount
+
+  return (
+    <View>
+      {groups.map((group) => (
+        <Text key={group.id}>{group.name}</Text>
+      ))}
+    </View>
+  );
+}
