@@ -1,8 +1,7 @@
-import { Button, FlatList, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../app/lib/supabase';
 import { View, Text } from './Themed';
-import { Session } from '@supabase/supabase-js'
+import { Link } from 'expo-router';
 
 export default function Groups() {
   const [groups, setGroups] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
@@ -36,7 +35,9 @@ export default function Groups() {
   return (
     <View>
       {groups.map((group) => (
-        <Text key={group.id}>{group.name}</Text>
+        <Link key={group.id} href={`/group/${group.slug}`}>
+          <Text key={group.id}>{group.name}</Text>
+        </Link>
       ))}
     </View>
   );
