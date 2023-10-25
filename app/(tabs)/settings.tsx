@@ -5,11 +5,13 @@ import { Button } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
 import Avatar from '../../components/Avatar'
 import { View, TextInput, Text } from '../../components/Themed'
+import { router } from 'expo-router'
 
 export default function Account() {
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
+  const [nonce, setNonce] = useState('')
+  const [newPassword, setnewPassword] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const [session, setSession] = useState<Session | null>(null)
 
@@ -36,10 +38,13 @@ export default function Account() {
   async function getProfile(sessionData: Session | null) {
     try {
       setLoading(true)
-      if (!sessionData?.user) throw new Error('No user on the session!')
+      if (!sessionData?.user) {
+        router.replace('/(auth)/login')
+        throw new Error('No user on the session!')
+      }
       let { data, error, status } = await supabase
         .from('profiles')
-        .select(`username, avatar_url, email`)
+        .select(`id, username, avatar_url, email`)
         .eq('id', sessionData.user.id)
         .single()
 
@@ -50,7 +55,6 @@ export default function Account() {
       if (data) {
         setUsername(data.username)
         setAvatarUrl(data.avatar_url)
-        setEmail(data.email)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -64,11 +68,9 @@ export default function Account() {
   async function updateProfile({
     username,
     avatar_url,
-    email
   }: {
     username: string
     avatar_url: string
-    email: string
   }) {
     try {
       setLoading(true)
@@ -78,7 +80,6 @@ export default function Account() {
         id: session.user.id,
         username,
         avatar_url,
-        email,
         updated_at: new Date(),
       }
 
@@ -96,6 +97,28 @@ export default function Account() {
     }
   }
 
+  async function sendReauthNonce() {
+    if (!session?.user.email) throw new Error('No user on the session!')
+
+    const email: string = session?.user.email
+    const { error } = await supabase.auth.reauthenticate();
+    Alert.alert(`Reset password email sent to ${email}`)
+
+    if (error) throw error;
+  };
+
+async function updatePassword(nonce: string, newPassword: string) {
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+    nonce: nonce
+  })
+
+  Alert.alert(`Password successfully updated!`)
+
+
+  if (error) throw error;
+}
+
   return (
     
     <View style={styles.container}>
@@ -104,13 +127,10 @@ export default function Account() {
           url={avatarUrl}
           onUpload={(url: string) => {
             setAvatarUrl(url)
-            updateProfile({ username, avatar_url: url, email })
+            updateProfile({ username, avatar_url: url })
           }}
         />
-      <View style={[styles.verticallySpaced, styles.mt20]} >
-        <Text lightColor="#000" darkColor="#eee">Email</Text>
-        <TextInput placeholder="Email" value={session?.user?.email} lightColor="#000" darkColor="#eee"/>
-      </View>
+
       <View style={styles.verticallySpaced}>
       <Text lightColor="#000" darkColor="#eee">Username</Text>
         <TextInput placeholder="Username" value={username.toLowerCase() || ''} onChangeText={(text) => setUsername(text)} lightColor="#000" darkColor="#eee" />
@@ -119,7 +139,7 @@ export default function Account() {
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? 'Loading ...' : 'Update'}
-          onPress={() => updateProfile({ username,  avatar_url: avatarUrl, email })}
+          onPress={() => updateProfile({ username,  avatar_url: avatarUrl })}
           disabled={loading}
         />
       </View>
@@ -127,7 +147,23 @@ export default function Account() {
       <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
+
+      <View style={[styles.verticallySpaced, styles.mt20]} >
+        <Button title="Reset Password" onPress={() => sendReauthNonce()} />
+      </View>
+
+      <View style={styles.verticallySpaced}>
+      <TextInput placeholder="One Time Passcode (OTP)"  onChangeText={(text) => setNonce(text)} lightColor="#000" darkColor="#eee" />
+
+      <TextInput placeholder="New Password"  onChangeText={(text) => setnewPassword(text)} lightColor="#000" darkColor="#eee" />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]} >
+        <Button title="Update password" onPress={() => updatePassword(nonce, newPassword)} />
+      </View>
+      
     </View>
+
+    
   )
 }
 

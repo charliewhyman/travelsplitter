@@ -3,6 +3,7 @@ import { Text, TextInput, View } from "../../components/Themed"
 import { useState } from "react"
 import { supabase } from "../lib/supabase"
 
+
 export default function ForgotPassword() {
     const [email, setEmail] = useState('') 
     const [loading, setLoading] = useState(false)
