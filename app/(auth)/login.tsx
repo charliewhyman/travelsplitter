@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Alert, StyleSheet, TextInput, Button } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { View } from '../../components/Themed'
+import { router } from 'expo-router'
 
 export default function Auth() {
   const [email, setEmail] = useState('')
@@ -55,6 +56,9 @@ export default function Auth() {
       </View>
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Forgot password?" disabled={loading} onPress={() => router.replace('/(auth)/forgotPassword')} />
       </View>
     </View>
   )
