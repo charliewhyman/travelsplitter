@@ -34,6 +34,7 @@ export default function Groups() {
 
   return (
     <View>
+      <Text>My Groups</Text>
       {groups.map((group) => (
         <Link key={group.id} href={`/group/${group.slug}`}>
           <Text key={group.id}>{group.name}</Text>
