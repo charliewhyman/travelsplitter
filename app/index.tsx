@@ -9,6 +9,7 @@ export default function IndexPage() {
             router.replace('/(tabs)/home')
           } else {
             console.log('no user')
+            router.replace('/(auth)/login')
           }
         })
     

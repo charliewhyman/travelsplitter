@@ -2,6 +2,7 @@ import { Alert, Button, StyleSheet } from "react-native"
 import { Text, TextInput, View } from "../../components/Themed"
 import { useState } from "react"
 import { supabase } from "../lib/supabase"
+import { router } from "expo-router"
 
 
 export default function ForgotPassword() {
@@ -10,9 +11,13 @@ export default function ForgotPassword() {
 
     async function resetPassword() {
         setLoading(true)
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: '(auth)/login',
-          })
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: 'exp://192.168.1.125:8081/--/%28tabs%29/settings'
+        }
+        )
+
+        Alert.alert(`Password reset link sent to ${email}`)
+        
     
         if (error) Alert.alert(error.message)
         setLoading(false)
