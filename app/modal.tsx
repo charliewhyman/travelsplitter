@@ -1,12 +1,79 @@
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet } from "react-native";
+import { Alert, Platform, StyleSheet } from "react-native";
 
 import { Text, View, TextInput } from "../components/Themed";
 import { Button } from "react-native-elements";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase, DbResult } from "./lib/supabase";
+import { Session } from "@supabase/supabase-js";
+import { router } from "expo-router";
 
 export default function ModalScreen() {
+  const [loading, setLoading] = useState(true)
   const [groupName, setGroupName] = useState('')
+  const [session, setSession] = useState<Session | null>(null)
+  const [groupNames, setGroupNames] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
+
+  useEffect(() => {
+    async function fetchSession() {
+      try {
+        const { data, error } = await supabase.auth.getSession()
+        if (error) {
+          throw error
+        }
+        if (data && data.session) {
+          setSession(data.session)
+          getGroups(data.session)
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert(error.message)
+        }
+      }
+    }
+    fetchSession()
+  }, [])
+
+  async function getGroups(sessionData: Session | null) {
+    try {
+      setLoading(true)
+      if (!sessionData?.user) {
+        router.replace('/(auth)/login')
+        throw new Error('No user on the session!')
+      }
+
+      let { data, error, status } = await supabase
+        .from('group_members')
+        .select(`
+        groups (
+          name
+        )`)
+        .eq('member_id', sessionData.user.id)
+
+      if (error && status !== 406) {
+        throw error
+      }
+
+      if (data) {
+        const groupNamesArray: string[] = [];
+
+        data.forEach((item, index) => {
+          if (!item.groups) {
+              throw new Error(`Groups is null at index ${index}`);
+          }
+          groupNamesArray.push(item.groups.name); // Push the "name" value to the array if "groups" is not null
+      });
+
+      setGroupNames(groupNamesArray);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -14,7 +81,7 @@ export default function ModalScreen() {
         <Text style={styles.title}>Create Group</Text>
         <View style={styles.verticallySpaced}>
         <TextInput placeholder="Group Name"  onChangeText={(text) => setGroupName(text)} lightColor="#eee" darkColor="#000" />
-        <Button title='+ Add Group'></Button>
+        <Button title='+ Add Group' onPress={() => getGroups(session)}></Button>
         </View>
         <View
           style={styles.separator}
