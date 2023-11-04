@@ -75,6 +75,10 @@ export default function ModalScreen() {
     }
   }
 
+  async function addGroup() {
+    
+  }
+
   function handleNewGroupButtonClick() {
     getGroups(session)
 

@@ -8,11 +8,11 @@ import { View, TextInput, Text } from '../../components/Themed'
 import { router } from 'expo-router'
 
 export default function Account() {
-  const [loading, setLoading] = useState(true)
-  const [username, setUsername] = useState('')
-  const [nonce, setNonce] = useState('')
-  const [newPassword, setnewPassword] = useState('')
-  const [avatarUrl, setAvatarUrl] = useState('')
+  const [loading, setLoading] = useState<boolean>(true)
+  const [username, setUsername] = useState<string | null>('')
+  const [nonce, setNonce] = useState<string | null>('')
+  const [newPassword, setnewPassword] = useState<string | null>('')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>('')
   const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function Account() {
         id: session.user.id,
         username,
         avatar_url,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       }
 
       let { error } = await supabase.from('profiles').upsert(updates)
@@ -124,22 +124,22 @@ async function updatePassword(nonce: string, newPassword: string) {
     <View style={styles.container}>
       <Avatar
           size={200}
-          url={avatarUrl}
+          url={avatarUrl || ""}
           onUpload={(url: string) => {
             setAvatarUrl(url)
-            updateProfile({ username, avatar_url: url })
+            updateProfile({ username: username || "", avatar_url: url || "" })
           }}
         />
 
       <View style={styles.verticallySpaced}>
       <Text lightColor="#000" darkColor="#eee">Username</Text>
-        <TextInput placeholder="Username" value={username.toLowerCase() || ''} onChangeText={(text) => setUsername(text)} lightColor="#000" darkColor="#eee" />
+        <TextInput placeholder="Username" value={username?.toLowerCase() || ''} onChangeText={(text) => setUsername(text)} lightColor="#000" darkColor="#eee" />
       </View>
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? 'Loading ...' : 'Update'}
-          onPress={() => updateProfile({ username,  avatar_url: avatarUrl })}
+          onPress={() => updateProfile({ username: username || "", avatar_url: avatarUrl || "" })}
           disabled={loading}
         />
       </View>
@@ -158,7 +158,7 @@ async function updatePassword(nonce: string, newPassword: string) {
       <TextInput placeholder="New Password"  onChangeText={(text) => setnewPassword(text)} lightColor="#000" darkColor="#eee" />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]} >
-        <Button title="Update password" onPress={() => updatePassword(nonce, newPassword)} />
+        <Button title="Update password" onPress={() => updatePassword( nonce || '', newPassword || '' )} />
       </View>
       
     </View>
