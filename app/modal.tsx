@@ -65,6 +65,7 @@ export default function ModalScreen() {
       });
 
       setGroupNames(groupNamesArray);
+
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -75,19 +76,59 @@ export default function ModalScreen() {
     }
   }
 
-  async function addGroup() {
-    
-  }
+  async function addGroup(sessionData: Session | null, newGroupName: string) {
+    //add the group
+    try {
+      setLoading(true)
+      if (!sessionData?.user) {
+        router.replace('/(auth)/login')
+        throw new Error('No user on the session!')
+      }
+
+      let slug = newGroupName.toLowerCase()
+      .replace(/[^\w ]+/g, "")
+      .replace(/ +/g, "-");
+
+      let { data: group_data, error: group_error, status: group_status } = await supabase
+      .from('groups')
+      .insert([
+        { name: newGroupName, slug: slug },
+      ])
+      .select()
+
+      if (group_data) {
+        let { data: group_members_data, error: group_members_error, status: group_members_status } = await supabase
+        .from('group_members')
+        .insert([
+          { group_id: group_data[0].id, member_id: sessionData.user.id },
+        ])
+        .select()
+      } else {
+        throw new Error('Group not created!')
+      }
+      
+      
+    } catch (error) {
+    if (error instanceof Error) {
+      Alert.alert(error.message)
+    }
+    } finally {
+      setLoading(false)
+    }
+  };
+
 
   function handleNewGroupButtonClick() {
     getGroups(session)
-
     if (groupNames.includes(newGroupName)) {
       Alert.alert(`Group "${newGroupName}" already exists!`)
     } else if (newGroupName == ""){
       Alert.alert(`Enter a group name`)
+    } else if (newGroupName.length >= 100){
+      Alert.alert(`Enter a group name of less than 100 characters`)
     } else {
-      console.log(`Group ${newGroupName} added`)
+      addGroup(session, newGroupName)
+      getGroups(session)
     }
 }
 
