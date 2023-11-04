@@ -10,7 +10,7 @@ import { router } from "expo-router";
 
 export default function ModalScreen() {
   const [loading, setLoading] = useState(true)
-  const [groupName, setGroupName] = useState('')
+  const [newGroupName, setNewGroupName] = useState('')
   const [session, setSession] = useState<Session | null>(null)
   const [groupNames, setGroupNames] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
 
@@ -75,13 +75,25 @@ export default function ModalScreen() {
     }
   }
 
+  function handleNewGroupButtonClick() {
+    getGroups(session)
+
+    if (groupNames.includes(newGroupName)) {
+      Alert.alert(`Group "${newGroupName}" already exists!`)
+    } else if (newGroupName == ""){
+      Alert.alert(`Enter a group name`)
+    } else {
+      console.log(`Group ${newGroupName} added`)
+    }
+}
+
   return (
     <>
       <View style={styles.container}>
         <Text style={styles.title}>Create Group</Text>
         <View style={styles.verticallySpaced}>
-        <TextInput placeholder="Group Name"  onChangeText={(text) => setGroupName(text)} lightColor="#eee" darkColor="#000" />
-        <Button title='+ Add Group' onPress={() => getGroups(session)}></Button>
+        <TextInput placeholder="Group Name"  onChangeText={(text) => setNewGroupName(text)} lightColor="#eee" darkColor="#000" />
+        <Button title='+ Add Group' onPress={() => handleNewGroupButtonClick()}></Button>
         </View>
         <View
           style={styles.separator}
