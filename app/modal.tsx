@@ -12,8 +12,7 @@ export default function ModalScreen() {
   const [loading, setLoading] = useState(true)
   const [newGroupName, setNewGroupName] = useState('')
   const [session, setSession] = useState<Session | null>(null)
-  const [groupNames, setGroupNames] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
-
+  const [groups, setGroups] = useState<string[]>([]); // Replace 'any' with the actual type of your groups
   useEffect(() => {
     async function fetchSession() {
       try {
@@ -64,7 +63,7 @@ export default function ModalScreen() {
           groupNamesArray.push(item.groups.name); // Push the "name" value to the array if "groups" is not null
       });
 
-      setGroupNames(groupNamesArray);
+      setGroups(groupNamesArray);
 
       }
     } catch (error) {
@@ -103,24 +102,25 @@ export default function ModalScreen() {
           { group_id: group_data[0].id, member_id: sessionData.user.id },
         ])
         .select()
+
       } else {
         throw new Error('Group not created!')
       }
-      
-      
+    
     } catch (error) {
     if (error instanceof Error) {
       Alert.alert(error.message)
     }
     } finally {
       setLoading(false)
+      Alert.alert(`Group ${newGroupName} successfully added.`)
+      router.replace('/')
     }
   };
 
 
   function handleNewGroupButtonClick() {
-    getGroups(session)
-    if (groupNames.includes(newGroupName)) {
+    if (groups.includes(newGroupName)) {
       Alert.alert(`Group "${newGroupName}" already exists!`)
     } else if (newGroupName == ""){
       Alert.alert(`Enter a group name`)
@@ -128,7 +128,6 @@ export default function ModalScreen() {
       Alert.alert(`Enter a group name of less than 100 characters`)
     } else {
       addGroup(session, newGroupName)
-      getGroups(session)
     }
 }
 
