@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../app/lib/supabase';
 import { View, Text } from './Themed';
 import { Link } from 'expo-router';
+import { Pressable } from 'react-native';
 
 export default function Groups() {
   const [groups, setGroups] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
@@ -36,8 +37,10 @@ export default function Groups() {
     <View>
       <Text>My Groups</Text>
       {groups.map((group) => (
-        <Link key={group.id} href={`/group/${group.slug}`}>
-          <Text key={group.id}>{group.name}</Text>
+        <Link key={group.id} href={`/group/${group.slug}`} asChild>
+          <Pressable>
+            <Text key={group.id}>{group.name}</Text>
+          </Pressable>
         </Link>
       ))}
     </View>

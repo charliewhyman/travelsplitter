@@ -1,15 +1,21 @@
 import { StyleSheet } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Text, View } from '../../components/Themed';
+import React from 'react';
 
 export default function Group() {
     const { slug } = useLocalSearchParams();
+    const navigation = useNavigation();
+
+    React.useEffect(() => {
+          navigation.setOptions({
+            headerShown: false,
+            title: `Group: ${slug}`
+          });
+        }, [navigation]);
+    
     return (
         <View>
-          <Stack.Screen
-        options={{title: `Group: ${slug}`
-        }}
-        />
           <Text style={styles.title}>Selected group: {slug}</Text>
         </View>
      
