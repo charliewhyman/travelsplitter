@@ -44,40 +44,6 @@ export default function Group() {
     
     
     //TODO add function to check if user is already in group
-    async function getGroup(sessionData: Session | null) {
-      try {
-        setLoading(true)
-        if (!sessionData?.user) {
-          router.replace('/(auth)/login')
-          throw new Error('No user on the session!')
-        }
-  
-        let { data, error, status } = await supabase
-          .from('group_members')
-          .select(`
-          groups (
-            id,
-            name
-          )`)
-          .eq('member_id', sessionData.user.id)
-          .eq('group_id', selectedGroup)
-  
-        if (error && status !== 406) {
-          throw error
-        }
-  
-        if (data) {
-          
-        };      
-        
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert(error.message)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
     //TODO add function to add user to group
     //does it need to email confirmation to the user?
 
@@ -90,14 +56,14 @@ export default function Group() {
         }
 
         let { data, error, status } = await supabase
-        .from('profiles')
+        .from('group_members')
         .select(`
-        username,
-        group_members(
-          *
-        )`)
-        .eq('username', 'cwhy')
-                  
+        profiles (username)
+        `)
+        .eq('profiles.username', username)
+        .eq('group_id', selectedGroup)
+        
+        console.log(data)
         if (error && status !== 406) {
           throw error
         }
@@ -118,6 +84,7 @@ export default function Group() {
         }
       } finally {
         setLoading(false)
+        console.log(userInGroup)
       }
     }
 
