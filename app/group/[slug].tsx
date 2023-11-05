@@ -1,28 +1,133 @@
-import { StyleSheet } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { Alert, StyleSheet } from 'react-native';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
 export default function Group() {
-    const { slug } = useLocalSearchParams();
+    const { slug, id } = useLocalSearchParams();
     const navigation = useNavigation();
-    const [newUser, setNewUser] = useState<string | null>('')
+    const [newUser, setNewUser] = useState<string >('')
+    const [loading, setLoading] = useState(true)
+    const [selectedGroup, setSelectedGroup]= useState<string | string[]>('');
+    const [session, setSession] = useState<Session | null>(null)
+    const [username, setUsername] = useState<string | null>('')
+    const [userInGroup, setUserInGroup] = useState<boolean | null>(null)
 
     React.useEffect(() => {
           navigation.setOptions({
             headerShown: false,
             title: `Group: ${slug}`
           });
+          
+          async function fetchSession() {
+            try {
+              const { data, error } = await supabase.auth.getSession()
+              if (error) {
+                throw error
+              }
+              if (data && data.session) {
+                setSession(data.session)
+                
+              }
+            } catch (error) {
+              if (error instanceof Error) {
+                Alert.alert(error.message)
+              }
+            }
+          }
+          fetchSession()
+          setSelectedGroup(id)
         }, [navigation]);
     
+    
+    //TODO add function to check if user is already in group
+    async function getGroup(sessionData: Session | null) {
+      try {
+        setLoading(true)
+        if (!sessionData?.user) {
+          router.replace('/(auth)/login')
+          throw new Error('No user on the session!')
+        }
+  
+        let { data, error, status } = await supabase
+          .from('group_members')
+          .select(`
+          groups (
+            id,
+            name
+          )`)
+          .eq('member_id', sessionData.user.id)
+          .eq('group_id', selectedGroup)
+  
+        if (error && status !== 406) {
+          throw error
+        }
+  
+        if (data) {
+          
+        };      
+        
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert(error.message)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    //TODO add function to add user to group
+    //does it need to email confirmation to the user?
+
+    async function checkUserInGroup(sessionData: Session | null, username: string) {
+      try {
+        setLoading(true)
+        if (!sessionData?.user) {
+          router.replace('/(auth)/login')
+          throw new Error('No user on the session!')
+        }
+
+        let { data, error, status } = await supabase
+        .from('profiles')
+        .select(`
+        username,
+        group_members(
+          *
+        )`)
+        .eq('username', 'cwhy')
+                  
+        if (error && status !== 406) {
+          throw error
+        }
+  
+        if (data && username != '' && username != null) {
+        setUserInGroup(true)
+        }
+        else if (username == ''|| username == null) {
+          Alert.alert('Enter a username to add to the group')
+          setUserInGroup(false)
+        } else {
+          setUserInGroup(false)
+        }
+        
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert(error.message)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+
     return (
         <View style={styles.container}>
           <Text style={styles.title}>{slug}</Text>
           <View style={[styles.verticallySpaced, styles.mt20]} >
               <Text>Add Group Member</Text>
-              <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text)} lightColor="#000" darkColor="#eee"></TextInput>
-                <Button title="Add user" onPress={() => console.log(newUser)} />
+              <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())} lightColor="#000" darkColor="#eee"></TextInput>
+                <Button title="Add user" onPress={() => checkUserInGroup(session, newUser)} />
             </View>
         </View>
         

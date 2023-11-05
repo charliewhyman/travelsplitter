@@ -47,8 +47,8 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack screenOptions={{ title: 'travelsplitter'}}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Travelsplitter' }} />
           <Stack.Screen name="modal" options={{ presentation: "modal", title: 'Add Group' }} />
         </Stack>
     </ThemeProvider>

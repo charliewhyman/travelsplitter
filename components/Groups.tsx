@@ -3,10 +3,10 @@ import { supabase } from '../app/lib/supabase';
 import { View, Text } from './Themed';
 import { Link } from 'expo-router';
 import { Pressable } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Groups() {
-  const [groups, setGroups] = useState<any[]>([]); // Replace 'any' with the actual type of your groups
-
+  const [groups, setGroups] = useState<any[]>([]); // TODO add actual type
   useEffect(() => {
     async function fetchData() {
       try {
@@ -37,10 +37,15 @@ export default function Groups() {
     <View>
       <Text>My Groups</Text>
       {groups.map((group) => (
-        <Link key={group.id} href={`/group/${group.slug}`} asChild>
-          <Pressable>
-            <Text key={group.id}>{group.name}</Text>
-          </Pressable>
+        <Link key={group.id} href={{
+          pathname: `/group/${group.slug}`,
+          params: { id: group.id }
+        }}
+        
+        asChild>
+          <TouchableOpacity>
+            <Text key={group.id}>{group.name} </Text>
+          </TouchableOpacity>
         </Link>
       ))}
     </View>
