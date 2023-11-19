@@ -21,6 +21,8 @@ export default function Auth() {
     setLoading(false)
   }
 
+  // TODO implement sign up using supabase email verification
+  // TODO add confirm password feature
   async function signUpWithEmail() {
     setLoading(true)
     const { error } = await supabase.auth.signUp({
@@ -28,8 +30,11 @@ export default function Auth() {
       password: password,
     })
 
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+    if (error) {
+      Alert.alert(error.message)
+      setLoading(false)
+  }
+
   }
 
   return (
