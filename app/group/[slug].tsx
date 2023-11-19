@@ -14,6 +14,8 @@ export default function Group() {
     const [selectedGroup, setSelectedGroup]= useState<string | string[]>('');
     const [session, setSession] = useState<Session | null>(null)
     const [username, setUsername] = useState<string | null>('')
+
+    const [userExists, setuserExists] = useState<boolean | null>(null)
     const [userInGroup, setUserInGroup] = useState<boolean | null>(null)
 
     React.useEffect(() => {
@@ -50,6 +52,10 @@ export default function Group() {
     async function checkUserInGroup(sessionData: Session | null, username: string) {
       try {
         setLoading(true)
+        // clear any previous values
+        setuserExists(null)
+        setUserInGroup(null)
+
         if (!sessionData?.user) {
           router.replace('/(auth)/login')
           throw new Error('No user on the session!')
@@ -63,18 +69,17 @@ export default function Group() {
         .eq('profiles.username', username)
         .eq('group_id', selectedGroup)
         
-        console.log(data)
         if (error && status !== 406) {
           throw error
         }
-  
-        if (data && username != '' && username != null) {
-        setUserInGroup(true)
+        
+        // check if username already exists in group
+        if (data && data[0].profiles?.username) {
+          Alert.alert(`${data[0].profiles.username} is already in the group.`)
+          setUserInGroup(true)
         }
-        else if (username == ''|| username == null) {
-          Alert.alert('Enter a username to add to the group')
-          setUserInGroup(false)
-        } else {
+
+        else {
           setUserInGroup(false)
         }
         
@@ -84,7 +89,52 @@ export default function Group() {
         }
       } finally {
         setLoading(false)
-        console.log(userInGroup)
+      }
+    }
+
+    async function checkUserExists(sessionData: Session | null, username: string) {
+      try {
+        setLoading(true)
+        if (!sessionData?.user) {
+          router.replace('/(auth)/login')
+          throw new Error('No user on the session!')
+        }
+
+        let { data, error, status } = await supabase
+        .from('profiles')
+        .select(`
+        username
+        `)
+        .eq('profiles.username', username)        
+        if (error && status !== 406) {
+          throw error
+        }
+        
+        // check if username already exists in group
+        if (data && data[0].username) {
+          setuserExists(true)
+        }
+
+        else {
+          setuserExists(false)
+        }
+        
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert(error.message)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    function handleAddMemberButtonClick(sessionData: Session | null, username: string) {
+      //check user exists and is not in the group
+      checkUserExists(session, username)
+      checkUserInGroup(session, username)
+
+      if (userExists == false && userInGroup == false) {
+        console.log('user exists and is not in group')
       }
     }
 
@@ -94,7 +144,7 @@ export default function Group() {
           <View style={[styles.verticallySpaced, styles.mt20]} >
               <Text>Add Group Member</Text>
               <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())} lightColor="#000" darkColor="#eee"></TextInput>
-                <Button title="Add user" onPress={() => checkUserInGroup(session, newUser)} />
+                <Button title="Add user" onPress={() => handleAddMemberButtonClick(session, newUser)} />
             </View>
         </View>
         
