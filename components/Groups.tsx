@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../app/lib/supabase';
 import { View, Text } from './Themed';
 import { Link, router, useNavigation } from 'expo-router';
-import { Alert, Pressable } from 'react-native';
+import { Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Session } from '@supabase/supabase-js';
 
@@ -35,7 +35,7 @@ export default function Groups() {
       try {
         if (!sessionData?.user) {
           router.replace('/(auth)/login')
-          throw new Error('No user on the session!')
+          throw new Error('GNo user on the session!')
         }
 
         let user = sessionData.user.id

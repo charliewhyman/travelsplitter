@@ -1,9 +1,7 @@
 import { Alert, Button, StyleSheet } from "react-native"
-import { Text, TextInput, View } from "../../components/Themed"
+import { TextInput, View } from "../../components/Themed"
 import { useState } from "react"
 import { supabase } from "../lib/supabase"
-import { router } from "expo-router"
-
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState('') 
@@ -12,7 +10,7 @@ export default function ForgotPassword() {
     async function resetPassword() {
         setLoading(true)
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: 'exp://192.168.1.125:8081/--/%28tabs%29/settings'
+          redirectTo: 'exp://192.168.1.198:8081/--/%28tabs%29/settings'
         }
         )
 
@@ -25,7 +23,7 @@ export default function ForgotPassword() {
 
 
     return (
-        <View style={styles.container}>
+          <View style={styles.container}>
             <View style={[styles.verticallySpaced]}>
               <TextInput style={styles.TextInput}
                 onChangeText={(text) => setEmail(text)}

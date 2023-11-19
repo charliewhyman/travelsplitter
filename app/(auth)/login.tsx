@@ -64,7 +64,7 @@ export default function Auth() {
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Button title="Forgot password?" disabled={loading} onPress={() => router.replace('/(auth)/forgotPassword')} />
+        <Button title="Forgot password?" disabled={loading} onPress={() => router.push('/(auth)/forgotPassword')} />
       </View>
     </View>
   )

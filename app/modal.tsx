@@ -4,7 +4,7 @@ import { Alert, Platform, StyleSheet } from "react-native";
 import { Text, View, TextInput } from "../components/Themed";
 import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
-import { supabase, DbResult } from "./lib/supabase";
+import { supabase } from "./lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { router } from "expo-router";
 
