@@ -1,25 +1,17 @@
-import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
+import { Session } from "@supabase/supabase-js";
 
 export default function IndexPage() {
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          if (session) {
-            router.replace('/(tabs)/home')
-          } else {
-            console.log('no user')
-            router.replace('/(auth)/login')
-          }
-        })
-    
-        supabase.auth.onAuthStateChange((_event, session) => {
-            if (session) {
-                router.replace('/(tabs)/home');
-            } else {
-                router.replace('/(auth)/login');
-            }
-        
-        })
-      }, []);
+  const [session, setSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, []);
 }

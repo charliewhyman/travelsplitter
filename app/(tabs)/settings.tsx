@@ -98,7 +98,7 @@ export default function Account() {
   }
 
   async function sendReauthNonce() {
-    if (!session?.user.email) throw new Error('No user on the session!')
+    if (!session?.user.email) throw new Error('No user on the session! (settings.tsx)')
 
     const email: string = session?.user.email
     const { error } = await supabase.auth.reauthenticate();

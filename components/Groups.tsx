@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../app/lib/supabase';
 import { View, Text } from './Themed';
 import { Link, router, useNavigation } from 'expo-router';
-import { Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Session } from '@supabase/supabase-js';
 
@@ -12,30 +11,13 @@ export default function Groups() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    async function fetchSession() {
-      try {
-        const { data, error } = await supabase.auth.getSession()
-        if (error) {
-          throw error
-        }
-        if (data && data.session) {
-          setSession(data.session)
-          
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert(error.message)
-        }
-      }
-    }
-    fetchSession()
   
     async function fetchGroups(sessionData: Session | null) {
 
       try {
         if (!sessionData?.user) {
           router.replace('/(auth)/login')
-          throw new Error('GNo user on the session!')
+          throw new Error('No user on the session! (Groups.tsx)')
         }
 
         let user = sessionData.user.id
@@ -60,11 +42,12 @@ export default function Groups() {
         if (error instanceof Error) {
           console.error('Error fetching groups: ', error.message);
         }
-      }
+      } 
     }
     
-    fetchGroups(session);
-  }, []); // Run this effect only once, similar to componentDidMount
+    if (session) fetchGroups(session);
+    
+  }, [session]); // Run this effect only once, similar to componentDidMount
 
   return (
     <View>

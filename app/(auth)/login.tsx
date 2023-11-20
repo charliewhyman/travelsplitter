@@ -25,16 +25,21 @@ export default function Auth() {
   // TODO add confirm password feature
   async function signUpWithEmail() {
     setLoading(true)
-    const { error } = await supabase.auth.signUp({
+    const { 
+      data: { session }, 
+      error } = await supabase.auth.signUp({
       email: email,
       password: password,
-    })
-
+      options: {
+        data: {
+          username: email,
+        },
+      }
+  })
     if (error) {
       Alert.alert(error.message)
       setLoading(false)
-  }
-
+    }
   }
 
   return (
