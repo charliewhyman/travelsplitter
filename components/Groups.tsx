@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../app/lib/supabase';
 import { View, Text } from './Themed';
-import { Link, router, useNavigation } from 'expo-router';
+import { Link, router, useNavigation, useFocusEffect } from 'expo-router';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Session } from '@supabase/supabase-js';
 
@@ -10,40 +10,44 @@ export default function Groups() {
   const [session, setSession] = useState<Session | null>(null)
   const navigation = useNavigation();
 
-  useEffect(() => {
-  
-    async function fetchGroups(sessionData: Session | null) {
+  const fetchGroups = async (sessionData: Session | null) => {
 
-      try {
-        if (!sessionData?.user) {
-          router.replace('/(auth)/login')
-          throw new Error('No user on the session! (Groups.tsx)')
-        }
+    try {
+      if (!sessionData?.user) {
+        router.replace('/(auth)/login')
+        throw new Error('No user on the session! (Groups.tsx)')
+      }
 
-        let user = sessionData.user.id
-        let { data: groupsData, error } = await supabase
-          .from('group_members')
-          .select(`
+      let user = sessionData.user.id
+      let { data: groupsData, error } = await supabase
+        .from('group_members')
+        .select(`
+        id,
+        groups (
           id,
-          groups (
-            id,
-            name,
-            slug
-          )
-          `).eq('member_id', sessionData.user.id);
+          name,
+          slug
+        )
+        `).eq('member_id', sessionData.user.id);
 
-        if (error) {
-          console.error('Error fetching groups: ', error.message);
-        } else {
-          console.log(groupsData)
-          setGroups(groupsData || []);
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching groups: ', error.message);
-        }
-      } 
-    }
+      if (error) {
+        console.error('Error fetching groups: ', error.message);
+      } else {
+        console.log(groupsData)
+        setGroups(groupsData || []);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error fetching groups: ', error.message);
+      }
+    } 
+  }
+
+  useFocusEffect(() => {
+    if (session) fetchGroups(session);
+  })
+
+  useEffect(() => {
     
     if (session) fetchGroups(session);
     
