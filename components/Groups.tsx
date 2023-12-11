@@ -42,9 +42,11 @@ export default function Groups() {
       }
     } 
   }
+  
 
   useFocusEffect(() => {
     if (session) fetchGroups(session);
+
   })
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { fetchSession } from '../helpers/groupHandler';
 
 export default function Group() {
     const { slug, id } = useLocalSearchParams();
@@ -24,22 +25,6 @@ export default function Group() {
             title: `Group: ${slug}`
           });
           
-          async function fetchSession() {
-            try {
-              const { data, error } = await supabase.auth.getSession()
-              if (error) {
-                throw error
-              }
-              if (data && data.session) {
-                setSession(data.session)
-                
-              }
-            } catch (error) {
-              if (error instanceof Error) {
-                Alert.alert(error.message)
-              }
-            }
-          }
           fetchSession()
           setSelectedGroup(id)
         }, [navigation]);

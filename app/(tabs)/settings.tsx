@@ -6,6 +6,7 @@ import { Session } from '@supabase/supabase-js'
 import Avatar from '../../components/Avatar'
 import { View, TextInput, Text } from '../../components/Themed'
 import { router } from 'expo-router'
+import { fetchSession } from '../helpers/groupHandler'
 
 export default function Account() {
   const [loading, setLoading] = useState<boolean>(true)
@@ -16,22 +17,6 @@ export default function Account() {
   const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
-    async function fetchSession() {
-      try {
-        const { data, error } = await supabase.auth.getSession()
-        if (error) {
-          throw error
-        }
-        if (data && data.session) {
-          setSession(data.session)
-          getProfile(data.session)
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert(error.message)
-        }
-      }
-    }
     fetchSession()
   }, [])
 
