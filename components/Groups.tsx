@@ -16,6 +16,7 @@ export default function Groups() {4
       if (session) {
         await getGroups(session, setGroups, setLoading);
         setSession(session);
+        setLoading(false);
       }
     }
 
@@ -26,14 +27,18 @@ export default function Groups() {4
   return (
     <View>
       <Text>My Groups</Text>
-      {groups.map((group, index) => (
-        <Link key={index} href={{
-          pathname: `/group/${group.slug}`,
-          params: { id: group.id }
-        }}>
-          {group}
-        </Link>
-      ))}
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : (
+        groups.map((group, index) => (
+          <Link key={index} href={{
+            pathname: `/group/${group.slug}`,
+            params: { id: group.id }
+          }}>
+            {group}
+          </Link>
+        ))
+      )}
     </View>
   );
 }
