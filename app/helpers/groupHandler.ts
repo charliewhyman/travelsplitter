@@ -1,11 +1,11 @@
 import { Alert } from "react-native";
 import { supabase } from "../lib/supabase";
-import { Session } from "@supabase/supabase-js";
+import { AuthSession } from "@supabase/supabase-js";
 import { router } from "expo-router";
 import { Dispatch, SetStateAction } from "react";
 
 
-export async function fetchSession(): Promise<Session | null> {
+export async function fetchSession(): Promise<AuthSession | null> {
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) {
@@ -24,7 +24,7 @@ export async function fetchSession(): Promise<Session | null> {
 }
 
 export async function getGroups(
-    sessionData: Session | null,
+    sessionData: AuthSession | null,
     setUserGroups: Dispatch<SetStateAction<string[]>>,
     setLoading: Dispatch<SetStateAction<boolean>>
   ): Promise<void> {
@@ -69,7 +69,7 @@ export async function getGroups(
   }
   
   export async function addGroup(
-    sessionData: Session | null,
+    sessionData: AuthSession | null,
     newGroupName: string,
     setLoading: Dispatch<SetStateAction<boolean>>
   ) {
