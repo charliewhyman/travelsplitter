@@ -4,7 +4,7 @@ import { Link, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
 import { fetchSession, getGroups } from '../app/helpers/groupHandler';
 
-export default function Groups() {4
+export default function Groups() {
   const [loading, setLoading] = useState(true);
   const [groups, setGroups] = useState<any[]>([]); // TODO add actual type
   const [session, setSession] = useState<Session | null>(null)
@@ -21,7 +21,6 @@ export default function Groups() {4
     }
 
     fetchData();
-    console.log(session,groups)
   }, [navigation]);
   
   return (
@@ -33,9 +32,9 @@ export default function Groups() {4
         groups.map((group, index) => (
           <Link key={index} href={{
             pathname: `/group/${group.slug}`,
-            params: { id: group.id }
-          }}>
-            {group}
+            params: group }
+          }>
+            {group.name}
           </Link>
         ))
       )}

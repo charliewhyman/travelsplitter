@@ -23,9 +23,15 @@ export async function fetchSession(): Promise<AuthSession | null> {
     }
 }
 
+interface Groups {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export async function getGroups(
     sessionData: AuthSession | null,
-    setUserGroups: Dispatch<SetStateAction<string[]>>,
+    setUserGroups: Dispatch<SetStateAction<Groups[]>>,
     setLoading: Dispatch<SetStateAction<boolean>>
   ): Promise<void> {
     try {
@@ -39,7 +45,9 @@ export async function getGroups(
         .from('group_members')
         .select(`
         groups (
-          name
+          id,
+          name,
+          slug
         )`)
         .eq('member_id', sessionData.user.id);
   
@@ -48,13 +56,13 @@ export async function getGroups(
       }
   
       if (data) {
-        const groupNamesArray: string[] = [];
+        const groupNamesArray: Groups[] = [];
   
         data.forEach((item, index) => {
           if (!item.groups) {
             throw new Error(`Groups is null at index ${index}`);
           }
-          groupNamesArray.push(item.groups.name);
+          groupNamesArray.push(item.groups);
         });
   
         setUserGroups(groupNamesArray);

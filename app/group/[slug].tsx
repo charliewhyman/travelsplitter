@@ -1,5 +1,5 @@
 import { Alert, StyleSheet } from 'react-native';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useGlobalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
@@ -29,10 +29,6 @@ export default function Group() {
           setSelectedGroup(id)
         }, [navigation]);
     
-    
-    //TODO add function to check if user is already in group
-    //TODO add function to add user to group
-    //does it need to email confirmation to the user?
 
     async function checkUserInGroup(sessionData: Session | null, username: string) {
       try {
