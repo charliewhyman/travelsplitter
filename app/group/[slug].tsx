@@ -1,47 +1,72 @@
 import { Alert, StyleSheet } from 'react-native';
-import { router, useGlobalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Stack, router, useGlobalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { fetchSession } from '../helpers/groupHandler';
+
+type LocalSearchParams = {
+  id: string,
+  name: string,
+  slug: string
+};
 
 export default function Group() {
-    const { slug, id } = useLocalSearchParams();
+    const { id, name, slug } = useLocalSearchParams<LocalSearchParams>();
     const navigation = useNavigation();
-    const [newUser, setNewUser] = useState<string >('')
-    const [loading, setLoading] = useState(true)
+    const [newUser, setNewUser] = useState<string >('');
+    const [loading, setLoading] = useState(false);
     const [selectedGroup, setSelectedGroup]= useState<string | string[]>('');
-    const [session, setSession] = useState<Session | null>(null)
-    const [username, setUsername] = useState<string | null>('')
+    const [session, setSession] = useState<Session | null>(null);
+    const [username, setUsername] = useState<string | null>('');
 
-    const [userExists, setuserExists] = useState<boolean | null>(null)
-    const [userInGroup, setUserInGroup] = useState<boolean | null>(null)
+    const [userExists, setUserExists] = useState<{ exists: boolean | null; userId?: string | null }>({ exists: null });
+    const [userInGroup, setUserInGroup] = useState<boolean | null>(null);
 
-    React.useEffect(() => {
-          navigation.setOptions({
-            headerShown: false,
-            title: `Group: ${slug}`
-          });
-          
-          fetchSession()
-          setSelectedGroup(id)
+    React.useEffect(() => {      
+          setSelectedGroup(id);
         }, [navigation]);
     
-
-    async function checkUserInGroup(sessionData: Session | null, username: string) {
+        async function checkUserExists(username: string) {
+          try {
+            setLoading(true)
+    
+            let { data, error, status } = await supabase
+            .from('profiles')
+            .select(`
+            id
+            `)
+            .eq('username', username) 
+          
+            if (error && status !== 406) {
+              throw error
+            }
+    
+            // check if username already exists in group
+            if (data && data.length === 0 || data == null) {
+              setUserExists({ exists: false, userId: null });
+              Alert.alert('User does not exist!')
+            }
+    
+            else {
+              const userId = data[0].id; 
+              setUserExists({ exists: true, userId });
+            }
+            
+          } catch (error) {
+            if (error instanceof Error) {
+              Alert.alert(error.message)
+            }
+          } finally {
+            setLoading(false)
+          }
+        }
+    
+    async function checkUserInGroup(username: string) {
       try {
         setLoading(true)
-        // clear any previous values
-        setuserExists(null)
-        setUserInGroup(null)
-
-        if (!sessionData?.user) {
-          router.replace('/(auth)/login')
-          throw new Error('No user on the session!')
-        }
-
+        
         let { data, error, status } = await supabase
         .from('group_members')
         .select(`
@@ -53,11 +78,11 @@ export default function Group() {
         if (error && status !== 406) {
           throw error
         }
-        
+
         // check if username already exists in group
-        if (data && data[0].profiles?.username) {
-          Alert.alert(`${data[0].profiles.username} is already in the group.`)
+        if (data && data[1].profiles?.username) {
           setUserInGroup(true)
+          Alert.alert('User already in group!')
         }
 
         else {
@@ -73,33 +98,23 @@ export default function Group() {
       }
     }
 
-    async function checkUserExists(sessionData: Session | null, username: string) {
+  
+    async function addUserToGroup(userId: string, groupId: string) {
       try {
         setLoading(true)
-        if (!sessionData?.user) {
-          router.replace('/(auth)/login')
-          throw new Error('No user on the session!')
-        }
 
         let { data, error, status } = await supabase
-        .from('profiles')
-        .select(`
-        username
-        `)
-        .eq('profiles.username', username)        
+        .from('group_members')
+          .insert([
+            { group_id: groupId, member_id: userId },
+          ])
+          .select();
+
+          Alert.alert('User added!')
+        
         if (error && status !== 406) {
           throw error
         }
-        
-        // check if username already exists in group
-        if (data && data[0].username) {
-          setuserExists(true)
-        }
-
-        else {
-          setuserExists(false)
-        }
-        
       } catch (error) {
         if (error instanceof Error) {
           Alert.alert(error.message)
@@ -109,28 +124,40 @@ export default function Group() {
       }
     }
 
-    function handleAddMemberButtonClick(sessionData: Session | null, username: string) {
-      //check user exists and is not in the group
-      checkUserExists(session, username)
-      checkUserInGroup(session, username)
+    async function handleAddMemberButtonClick(username: string) {    
+      try {
+        setLoading(true);
 
-      if (userExists == false && userInGroup == false) {
-        console.log('user exists and is not in group')
+        setUserExists({ exists: null, userId: null });
+        setUserInGroup(null);
+        
+        await checkUserExists(username);
+    
+        if (userExists.exists === true && userExists.userId) {
+          await checkUserInGroup(username);
+    
+          if (userInGroup === false) {
+            await addUserToGroup(userExists.userId, id);
+          }
+        }
+        
+      } catch (error: any) {
+        Alert.alert("Error", error.message);
+      } finally {
+        setLoading(false);
       }
     }
-
+      
     return (
-        <View style={styles.container}>
-          <Text style={styles.title}>{slug}</Text>
-          <View style={[styles.verticallySpaced, styles.mt20]} >
-              <Text>Add Group Member</Text>
-              <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())} lightColor="#000" darkColor="#eee"></TextInput>
-                <Button title="Add user" onPress={() => handleAddMemberButtonClick(session, newUser)} />
-            </View>
+    <View style={styles.container}>
+      <Text style={styles.title}>{name}</Text>
+      
+      <View style={[styles.verticallySpaced, styles.mt20]} >
+        <Text>Add Group Member</Text>
+        <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())} lightColor="#000" darkColor="#eee"></TextInput>
+          <Button title="Add user" onPress={() => handleAddMemberButtonClick(newUser)} disabled={loading}/>
         </View>
-        
-
-
+    </View>
     )
 };
   const styles = StyleSheet.create({
@@ -149,6 +176,8 @@ export default function Group() {
       width: '80%',
     },
     verticallySpaced: {
+      paddingLeft: 20,
+      paddingRight: 20,
       paddingTop: 4,
       paddingBottom: 4,
       alignSelf: 'stretch',

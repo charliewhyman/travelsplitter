@@ -6,13 +6,13 @@ import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
-import { fetchSession, getGroups, addGroup } from "./helpers/groupHandler";
+import { fetchSession, getGroups, addGroup, Groups } from "./helpers/groupHandler";
 
 export default function ModalScreen() {
-  const [loading, setLoading] = useState(true);
-  const [newGroupName, setNewGroupName] = useState('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [newGroupName, setNewGroupName] = useState<string>('');
   const [session, setSession] = useState<Session | null>(null);
-  const [userGroups, setUserGroups] = useState<string[]>([]);
+  const [userGroups, setUserGroups] = useState<Groups[]>([]);
 
   const isPresented = router.canGoBack();
 
@@ -29,15 +29,13 @@ export default function ModalScreen() {
   }, []);
 
  
-
-
   async function handleNewGroupButtonClick() {
     if (!session) {
       Alert.alert('No user on the session!');
       return;
     }
 
-    if (userGroups.includes(newGroupName)) {
+    if (userGroups.some(group => group.name === newGroupName)) {
       Alert.alert(`Group "${newGroupName}" already exists!`);
     } else if (newGroupName === '') {
       Alert.alert('Enter a group name');

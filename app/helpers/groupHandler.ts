@@ -23,7 +23,7 @@ export async function fetchSession(): Promise<AuthSession | null> {
     }
 }
 
-interface Groups {
+export interface Groups {
   id: string;
   name: string;
   slug: string;
