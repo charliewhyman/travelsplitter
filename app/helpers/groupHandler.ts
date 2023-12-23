@@ -23,7 +23,7 @@ export async function fetchSession(): Promise<AuthSession | null> {
     }
 }
 
-export interface Groups {
+export interface Group {
   id: string;
   name: string;
   slug: string;
@@ -31,7 +31,7 @@ export interface Groups {
 
 export async function getGroups(
     sessionData: AuthSession | null,
-    setUserGroups: Dispatch<SetStateAction<Groups[]>>,
+    setUserGroups: Dispatch<SetStateAction<Group[]>>,
     setLoading: Dispatch<SetStateAction<boolean>>
   ): Promise<void> {
     try {
@@ -56,7 +56,7 @@ export async function getGroups(
       }
   
       if (data) {
-        const groupNamesArray: Groups[] = [];
+        const groupNamesArray: Group[] = [];
   
         data.forEach((item, index) => {
           if (!item.groups) {
@@ -115,5 +115,95 @@ export async function getGroups(
       setLoading(false);
       Alert.alert(`Group ${newGroupName} successfully added.`);
       router.replace('/');
+    }
+  }
+
+  export async function checkUserExists(username: string, setLoading: Dispatch<SetStateAction<boolean>>): Promise<{ exists: boolean | null; userId?: string | null }> {
+    try {
+      setLoading(true);
+  
+      let { data, error, status } = await supabase
+        .from('profiles')
+        .select(`
+        id
+        `)
+        .eq('username', username);
+  
+      if (error && status !== 406) {
+        throw error;
+      }
+  
+      // check if username already exists in group
+      if (data && data.length === 0 || data == null) {
+        return { exists: false, userId: null };
+      } else {
+        const userId = data[0].id;
+        return { exists: true, userId };
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+      return { exists: null };
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  export async function checkUserInGroup(username: string, selectedGroup: string | string[], setLoading: Dispatch<SetStateAction<boolean>>): Promise<boolean | null> {
+    try {
+      setLoading(true);
+  
+      let { data, error, status } = await supabase
+        .from('group_members')
+        .select(`
+        profiles (username)
+        `)
+        .eq('profiles.username', username)
+        .eq('group_id', selectedGroup);
+  
+      if (error && status !== 406) {
+        throw error;
+      }
+  
+      // check if username already exists in group
+      if (data && data[1].profiles?.username) {
+        Alert.alert('User already in group!');
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  export async function addUserToGroup(userId: string, groupId: string, setLoading: Dispatch<SetStateAction<boolean>>): Promise<void> {
+    try {
+      setLoading(true);
+  
+      let { data, error, status } = await supabase
+        .from('group_members')
+        .insert([
+          { group_id: groupId, member_id: userId },
+        ])
+        .select();
+  
+      Alert.alert('User added!');
+  
+      if (error && status !== 406) {
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
     }
   }

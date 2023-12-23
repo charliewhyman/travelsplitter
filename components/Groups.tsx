@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { View, Text } from './Themed';
 import { Link, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
-import { fetchSession, getGroups } from '../app/helpers/groupHandler';
+import { fetchSession, Group, getGroups } from '../app/helpers/groupHandler';
 
 export default function Groups() {
   const [loading, setLoading] = useState(true);
-  const [groups, setGroups] = useState<any[]>([]); // TODO add actual type
+  const [groups, setGroups] = useState<Group[]>([]);
   const [session, setSession] = useState<Session | null>(null)
   const navigation = useNavigation();
 
@@ -32,7 +32,7 @@ export default function Groups() {
         groups.map((group, index) => (
           <Link key={index} href={{
             pathname: `/group/${encodeURIComponent(group.slug)}`,
-            params: group }
+            params: {slug: group.slug, name: group.name} }
           }>
             {group.name}
           </Link>

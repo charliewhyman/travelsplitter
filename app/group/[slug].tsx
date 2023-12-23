@@ -1,10 +1,10 @@
 import { Alert, StyleSheet } from 'react-native';
-import { Stack, router, useGlobalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
+import {useLocalSearchParams, useNavigation } from 'expo-router';
 import { Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { addUserToGroup, checkUserExists, checkUserInGroup } from '../helpers/groupHandler';
 
 type LocalSearchParams = {
   id: string,
@@ -18,8 +18,6 @@ export default function Group() {
     const [newUser, setNewUser] = useState<string >('');
     const [loading, setLoading] = useState(false);
     const [selectedGroup, setSelectedGroup]= useState<string | string[]>('');
-    const [session, setSession] = useState<Session | null>(null);
-    const [username, setUsername] = useState<string | null>('');
 
     const [userExists, setUserExists] = useState<{ exists: boolean | null; userId?: string | null }>({ exists: null });
     const [userInGroup, setUserInGroup] = useState<boolean | null>(null);
@@ -27,126 +25,27 @@ export default function Group() {
     React.useEffect(() => {      
           setSelectedGroup(id);
         }, [navigation]);
-    
-        async function checkUserExists(username: string) {
+
+        async function handleAddMemberButtonClick(username: string) {    
           try {
-            setLoading(true)
-    
-            let { data, error, status } = await supabase
-            .from('profiles')
-            .select(`
-            id
-            `)
-            .eq('username', username) 
-          
-            if (error && status !== 406) {
-              throw error
-            }
-    
-            // check if username already exists in group
-            if (data && data.length === 0 || data == null) {
-              setUserExists({ exists: false, userId: null });
-              Alert.alert('User does not exist!')
-            }
-    
-            else {
-              const userId = data[0].id; 
-              setUserExists({ exists: true, userId });
-            }
+            setLoading(true);
+      
+            setUserExists({ exists: null, userId: null });
+            setUserInGroup(null);
             
-          } catch (error) {
-            if (error instanceof Error) {
-              Alert.alert(error.message)
+            await checkUserExists(username, setLoading);
+            if (userExists.exists === true && userExists.userId) {
+              await checkUserInGroup(username, selectedGroup, setLoading); 
+              if (userInGroup === false) {
+                await addUserToGroup(userExists.userId, id, setLoading);
+              }
             }
+          } catch (error: any) {
+            Alert.alert("Error", error.message);
           } finally {
-            setLoading(false)
+            setLoading(false);
           }
         }
-    
-    async function checkUserInGroup(username: string) {
-      try {
-        setLoading(true)
-        
-        let { data, error, status } = await supabase
-        .from('group_members')
-        .select(`
-        profiles (username)
-        `)
-        .eq('profiles.username', username)
-        .eq('group_id', selectedGroup)
-        
-        if (error && status !== 406) {
-          throw error
-        }
-
-        // check if username already exists in group
-        if (data && data[1].profiles?.username) {
-          setUserInGroup(true)
-          Alert.alert('User already in group!')
-        }
-
-        else {
-          setUserInGroup(false)
-        }
-        
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert(error.message)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-  
-    async function addUserToGroup(userId: string, groupId: string) {
-      try {
-        setLoading(true)
-
-        let { data, error, status } = await supabase
-        .from('group_members')
-          .insert([
-            { group_id: groupId, member_id: userId },
-          ])
-          .select();
-
-          Alert.alert('User added!')
-        
-        if (error && status !== 406) {
-          throw error
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert(error.message)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    async function handleAddMemberButtonClick(username: string) {    
-      try {
-        setLoading(true);
-
-        setUserExists({ exists: null, userId: null });
-        setUserInGroup(null);
-        
-        await checkUserExists(username);
-    
-        if (userExists.exists === true && userExists.userId) {
-          await checkUserInGroup(username);
-    
-          if (userInGroup === false) {
-            await addUserToGroup(userExists.userId, id);
-          }
-        }
-        
-      } catch (error: any) {
-        Alert.alert("Error", error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
       
     return (
     <View style={styles.container}>
