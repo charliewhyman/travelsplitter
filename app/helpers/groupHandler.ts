@@ -207,3 +207,58 @@ export async function getGroups(
       setLoading(false);
     }
   }
+
+
+  export interface User {
+    id: string;
+    username: string;
+    email: string;
+  }
+
+  export async function getGroupMembers(
+    sessionData: AuthSession | null,
+    groupId: string,
+    setGroupMembers: Dispatch<SetStateAction<User[]>>,
+    setLoading: Dispatch<SetStateAction<boolean>>
+  ): Promise<void> {
+    try {
+      setLoading(true);
+      if (!sessionData?.user) {
+        router.replace('/(auth)/login');
+        throw new Error('No user on the session!');
+      }
+  
+      let { data, error, status } = await supabase
+        .from('group_members')
+        .select(`
+        profiles (
+          id,
+          username,
+          email
+        )`)
+        .eq('group_id', groupId);
+  
+      if (error && status !== 406) {
+        throw error;
+      }
+  
+      if (data) {
+        const userArray: User[] = [];
+  
+        data.forEach((item, index) => {
+          if (!item.profiles) {
+            throw new Error(`Users is null at index ${index}`);
+          }
+          userArray.push(item.profiles);
+        });
+  
+        setGroupMembers(userArray);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }

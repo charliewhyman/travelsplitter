@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { Session } from '@supabase/supabase-js';
 import { addUserToGroup, checkUserExists, checkUserInGroup } from '../helpers/groupHandler';
+import GroupMembers from '../../components/GroupMembers';
 
 type LocalSearchParams = {
   id: string,
@@ -21,7 +22,7 @@ export default function Group() {
 
     const [userExists, setUserExists] = useState<{ exists: boolean | null; userId?: string | null }>({ exists: null });
     const [userInGroup, setUserInGroup] = useState<boolean | null>(null);
-
+    
     React.useEffect(() => {      
           setSelectedGroup(id);
         }, [navigation]);
@@ -50,7 +51,7 @@ export default function Group() {
     return (
     <View style={styles.container}>
       <Text style={styles.title}>{name}</Text>
-      
+      <GroupMembers></GroupMembers>
       <View style={[styles.verticallySpaced, styles.mt20]} >
         <Text>Add Group Member</Text>
         <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())} lightColor="#000" darkColor="#eee"></TextInput>

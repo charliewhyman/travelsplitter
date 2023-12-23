@@ -32,7 +32,7 @@ export default function Groups() {
         groups.map((group, index) => (
           <Link key={index} href={{
             pathname: `/group/${encodeURIComponent(group.slug)}`,
-            params: {slug: group.slug, name: group.name} }
+            params: {id: group.id, slug: group.slug, name: group.name} }
           }>
             {group.name}
           </Link>
