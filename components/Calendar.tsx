@@ -27,7 +27,7 @@ export default function Calendar() {
 
   return (
     <View style={styles.container}>
-      <CalendarPicker
+      <CalendarPicker 
         startFromMonday={true}
         allowRangeSelection={true}
         minDate={minDate}
@@ -39,8 +39,8 @@ export default function Calendar() {
       />
 
       <View>
-        <Text>SELECTED START DATE:{startDate}</Text>
-        <Text>SELECTED END DATE:{endDate}</Text>
+        <Text>Trip start date:{startDate}</Text>
+        <Text>Trip end date:{endDate}</Text>
       </View>
     </View>
   );
@@ -49,7 +49,6 @@ export default function Calendar() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     marginTop: 100,
   },
 });

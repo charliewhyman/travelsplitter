@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { addUserToTrip, checkUserExists, checkUserInTrip } from '../helpers/tripHandler';
 import TripMembers from '../../components/TripMembers';
-import Calendar from '../../components/Calendar';
 
 type LocalSearchParams = {
   id: string,

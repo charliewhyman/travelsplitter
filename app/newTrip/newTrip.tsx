@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
 import { fetchSession, getTrips, addTrip, Trip } from "../helpers/tripHandler";
+import Calendar from '../../components/Calendar';
 
 export default function ModalScreen() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,7 +53,7 @@ export default function ModalScreen() {
     <>
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
-        <Text style={styles.title}>Create Trip</Text>
+        <Calendar/>
         <View style={styles.verticallySpaced}>
         <TextInput placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)} lightColor="#eee" darkColor="#000" />
         <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
