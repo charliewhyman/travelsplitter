@@ -62,13 +62,15 @@ export default function Account() {
       if (!session?.user) throw new Error('No user on the session!')
 
       const updates = {
-        id: session.user.id,
         username,
         avatar_url,
         updated_at: new Date().toISOString(),
       }
 
-      let { error } = await supabase.from('profiles').upsert(updates)
+      let { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', session.user.id)
 
       if (error) {
         throw error
