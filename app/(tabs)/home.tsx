@@ -10,7 +10,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Home</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <Button title='+ Add Group' onPress={() => router.push('/modal')}></Button>
+        <Button title='+ Add Group' onPress={() => router.push('/newGroup/newGroup')}></Button>
         <Groups />
       </View>
   );

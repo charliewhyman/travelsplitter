@@ -1,18 +1,18 @@
 import { StatusBar } from "expo-status-bar";
 import { Alert, Platform, StyleSheet } from "react-native";
 
-import { Text, View, TextInput } from "../components/Themed";
+import { Text, View, TextInput } from "../../components/Themed";
 import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
-import { fetchSession, getGroups, addGroup, Groups } from "./helpers/groupHandler";
+import { fetchSession, getGroups, addGroup, Group } from "../helpers/groupHandler";
 
 export default function ModalScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [newGroupName, setNewGroupName] = useState<string>('');
   const [session, setSession] = useState<Session | null>(null);
-  const [userGroups, setUserGroups] = useState<Groups[]>([]);
+  const [userGroups, setUserGroups] = useState<Group[]>([]);
 
   const isPresented = router.canGoBack();
 
