@@ -3,10 +3,8 @@ import {useLocalSearchParams, useNavigation } from 'expo-router';
 import { Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
-import { Session } from '@supabase/supabase-js';
 import { addUserToGroup, checkUserExists, checkUserInGroup } from '../helpers/groupHandler';
 import GroupMembers from '../../components/GroupMembers';
-import CalendarPicker from '../../components/Calendar';
 
 type LocalSearchParams = {
   id: string,
@@ -51,7 +49,6 @@ export default function Group() {
       
     return (
     <View style={styles.container}>
-      <CalendarPicker/>
       <Text style={styles.title}>{name}</Text>
       <GroupMembers></GroupMembers>
       <View style={[styles.verticallySpaced, styles.mt20]} >
