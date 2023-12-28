@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { addUserToGroup, checkUserExists, checkUserInGroup } from '../helpers/groupHandler';
 import GroupMembers from '../../components/GroupMembers';
+import Calendar from '../../components/Calendar';
 
 type LocalSearchParams = {
   id: string,
@@ -49,6 +50,7 @@ export default function Group() {
       
     return (
     <View style={styles.container}>
+      <Calendar/>
       <Text style={styles.title}>{name}</Text>
       <GroupMembers></GroupMembers>
       <View style={[styles.verticallySpaced, styles.mt20]} >
