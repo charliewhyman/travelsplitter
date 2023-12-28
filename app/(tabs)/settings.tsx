@@ -17,30 +17,39 @@ export default function Account() {
   const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
-    fetchSession()
+    getProfile()
   }, [])
 
-  async function getProfile(sessionData: Session | null) {
+  async function getProfile() {
+
     try {
       setLoading(true)
-      if (!sessionData?.user) {
-        router.replace('/(auth)/login')
-        throw new Error('No user on the session!')
-      }
-      let { data, error, status } = await supabase
-        .from('profiles')
-        .select(`id, username, avatar_url, email`)
-        .eq('id', sessionData.user.id)
-        .single()
+      const sessionData = await fetchSession();
 
-      if (error && status !== 406) {
-        throw error
+      if (sessionData) {
+        setSession(sessionData);
+
+        if (!sessionData?.user) {
+          router.replace('/(auth)/login')
+          throw new Error('No user on the session!')
+        }
+
+        let { data, error, status } = await supabase
+          .from('profiles')
+          .select(`id, username, avatar_url, email`)
+          .eq('id', sessionData.user.id)
+          .single()
+
+        if (error && status !== 406) {
+          throw error
+        }
+
+        if (data) {
+          setUsername(data.username)
+          setAvatarUrl(data.avatar_url)
+        }
       }
 
-      if (data) {
-        setUsername(data.username)
-        setAvatarUrl(data.avatar_url)
-      }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message)
@@ -48,7 +57,8 @@ export default function Account() {
     } finally {
       setLoading(false)
     }
-  }
+  }  
+  
 
   async function updateProfile({
     username,
@@ -107,7 +117,6 @@ async function updatePassword(nonce: string, newPassword: string) {
 }
 
   return (
-    
     <View style={styles.container}>
       <Avatar
           size={200}
