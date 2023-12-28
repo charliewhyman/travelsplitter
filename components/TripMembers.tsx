@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text } from './Themed';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
-import { fetchSession, getGroupMembers, User } from '../app/helpers/groupHandler';
+import { fetchSession, getTripMembers, User } from '../app/helpers/tripHandler';
 
 type LocalSearchParams = {
     id: string,
@@ -10,7 +10,7 @@ type LocalSearchParams = {
     slug: string
   };
 
-export default function GroupMembers() {
+export default function TripMembers() {
   const { id, name, slug } = useLocalSearchParams<LocalSearchParams>();
   const [loading, setLoading] = useState(true);
   const [members, setMembers] = useState<User[]>([]);
@@ -21,7 +21,7 @@ export default function GroupMembers() {
     async function fetchData() {
       const session = await fetchSession();
       if (session) {
-        await getGroupMembers(session, id, setMembers, setLoading);
+        await getTripMembers(session, id, setMembers, setLoading);
         setSession(session);
         setLoading(false);
       }
@@ -32,7 +32,7 @@ export default function GroupMembers() {
   
   return (
     <View>
-      <Text>Group Members</Text>
+      <Text>Trip Members</Text>
       {loading ? (
         <Text>Loading...</Text>
       ) : (

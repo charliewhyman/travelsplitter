@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { View, Text } from './Themed';
 import { Link, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
-import { fetchSession, Group, getGroups } from '../app/helpers/groupHandler';
+import { fetchSession, Trip, getTrips } from '../app/helpers/tripHandler';
 
-export default function Groups() {
+export default function Trips() {
   const [loading, setLoading] = useState(true);
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const [session, setSession] = useState<Session | null>(null)
   const navigation = useNavigation();
 
@@ -14,7 +14,7 @@ export default function Groups() {
     async function fetchData() {
       const session = await fetchSession();
       if (session) {
-        await getGroups(session, setGroups, setLoading);
+        await getTrips(session, setTrips, setLoading);
         setSession(session);
         setLoading(false);
       }
@@ -25,16 +25,16 @@ export default function Groups() {
   
   return (
     <View>
-      <Text>My Groups</Text>
+      <Text>My Trips</Text>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        groups.map((group, index) => (
+        trips.map((trip, index) => (
           <Link key={index} href={{
-            pathname: `/group/${encodeURIComponent(group.slug)}`,
-            params: {id: group.id, slug: group.slug, name: group.name} }
+            pathname: `/trip/${encodeURIComponent(trip.slug)}`,
+            params: {id: trip.id, slug: trip.slug, name: trip.name} }
           }>
-            {group.name}
+            {trip.name}
           </Link>
         ))
       )}

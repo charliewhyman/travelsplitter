@@ -23,15 +23,15 @@ export async function fetchSession(): Promise<AuthSession | null> {
     }
 }
 
-export interface Group {
+export interface Trip {
   id: string;
   name: string;
   slug: string;
 }
 
-export async function getGroups(
+export async function getTrips(
     sessionData: AuthSession | null,
-    setUserGroups: Dispatch<SetStateAction<Group[]>>,
+    setUserTrips: Dispatch<SetStateAction<Trip[]>>,
     setLoading: Dispatch<SetStateAction<boolean>>
   ): Promise<void> {
     try {
@@ -42,9 +42,9 @@ export async function getGroups(
       }
   
       let { data, error, status } = await supabase
-        .from('group_members')
+        .from('trip_members')
         .select(`
-        groups (
+        trips (
           id,
           name,
           slug
@@ -56,16 +56,16 @@ export async function getGroups(
       }
   
       if (data) {
-        const groupNamesArray: Group[] = [];
+        const tripNamesArray: Trip[] = [];
   
         data.forEach((item, index) => {
-          if (!item.groups) {
-            throw new Error(`Groups is null at index ${index}`);
+          if (!item.trips) {
+            throw new Error(`Trips is null at index ${index}`);
           }
-          groupNamesArray.push(item.groups);
+          tripNamesArray.push(item.trips);
         });
   
-        setUserGroups(groupNamesArray);
+        setUserTrips(tripNamesArray);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -76,9 +76,9 @@ export async function getGroups(
     }
   }
   
-  export async function addGroup(
+  export async function addTrip(
     sessionData: AuthSession | null,
-    newGroupName: string,
+    newTripName: string,
     setLoading: Dispatch<SetStateAction<boolean>>
   ) {
     try {
@@ -88,24 +88,24 @@ export async function getGroups(
         throw new Error('No user on the session!');
       }
   
-      let slug = newGroupName.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-");
+      let slug = newTripName.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-");
   
-      let { data: group_data, error: group_error, status: group_status } = await supabase
-        .from('groups')
+      let { data: trip_data, error: trip_error, status: trip_status } = await supabase
+        .from('trips')
         .insert([
-          { name: newGroupName, slug: slug },
+          { name: newTripName, slug: slug },
         ])
         .select();
   
-      if (group_data) {
-        let { data: group_members_data, error: group_members_error, status: group_members_status } = await supabase
-          .from('group_members')
+      if (trip_data) {
+        let { data: trip_members_data, error: trip_members_error, status: trip_members_status } = await supabase
+          .from('trip_members')
           .insert([
-            { group_id: group_data[0].id, member_id: sessionData.user.id },
+            { trip_id: trip_data[0].id, member_id: sessionData.user.id },
           ])
           .select();
       } else {
-        throw new Error('Group not created!');
+        throw new Error('Trip not created!');
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -113,7 +113,7 @@ export async function getGroups(
       }
     } finally {
       setLoading(false);
-      Alert.alert(`Group ${newGroupName} successfully added.`);
+      Alert.alert(`Trip ${newTripName} successfully added.`);
       router.replace('/');
     }
   }
@@ -133,7 +133,7 @@ export async function getGroups(
         throw error;
       }
   
-      // check if username already exists in group
+      // check if username already exists in trip
       if (data && data.length === 0 || data == null) {
         return { exists: false, userId: null };
       } else {
@@ -150,25 +150,25 @@ export async function getGroups(
     }
   }
   
-  export async function checkUserInGroup(username: string, selectedGroup: string | string[], setLoading: Dispatch<SetStateAction<boolean>>): Promise<boolean | null> {
+  export async function checkUserInTrip(username: string, selectedTrip: string | string[], setLoading: Dispatch<SetStateAction<boolean>>): Promise<boolean | null> {
     try {
       setLoading(true);
   
       let { data, error, status } = await supabase
-        .from('group_members')
+        .from('trip_members')
         .select(`
         profiles (username)
         `)
         .eq('profiles.username', username)
-        .eq('group_id', selectedGroup);
+        .eq('trip_id', selectedTrip);
   
       if (error && status !== 406) {
         throw error;
       }
   
-      // check if username already exists in group
+      // check if username already exists in trip
       if (data && data[1].profiles?.username) {
-        Alert.alert('User already in group!');
+        Alert.alert('User already in trip!');
         return true;
       } else {
         return false;
@@ -183,14 +183,14 @@ export async function getGroups(
     }
   }
   
-  export async function addUserToGroup(userId: string, groupId: string, setLoading: Dispatch<SetStateAction<boolean>>): Promise<void> {
+  export async function addUserToTrip(userId: string, tripId: string, setLoading: Dispatch<SetStateAction<boolean>>): Promise<void> {
     try {
       setLoading(true);
   
       let { data, error, status } = await supabase
-        .from('group_members')
+        .from('trip_members')
         .insert([
-          { group_id: groupId, member_id: userId },
+          { trip_id: tripId, member_id: userId },
         ])
         .select();
   
@@ -215,10 +215,10 @@ export async function getGroups(
     email: string;
   }
 
-  export async function getGroupMembers(
+  export async function getTripMembers(
     sessionData: AuthSession | null,
-    groupId: string,
-    setGroupMembers: Dispatch<SetStateAction<User[]>>,
+    tripId: string,
+    setTripMembers: Dispatch<SetStateAction<User[]>>,
     setLoading: Dispatch<SetStateAction<boolean>>
   ): Promise<void> {
     try {
@@ -229,14 +229,14 @@ export async function getGroups(
       }
   
       let { data, error, status } = await supabase
-        .from('group_members')
+        .from('trip_members')
         .select(`
         profiles (
           id,
           username,
           email
         )`)
-        .eq('group_id', groupId);
+        .eq('trip_id', tripId);
   
       if (error && status !== 406) {
         throw error;
@@ -252,7 +252,7 @@ export async function getGroups(
           userArray.push(item.profiles);
         });
   
-        setGroupMembers(userArray);
+        setTripMembers(userArray);
       }
     } catch (error) {
       if (error instanceof Error) {

@@ -45,7 +45,7 @@ export interface Database {
           created_at: string
           created_by: string | null
           desc: string | null
-          group_id: string | null
+          trip_id: string | null
           id: number
           name: string
           trip_id: number | null
@@ -54,7 +54,7 @@ export interface Database {
           created_at?: string
           created_by?: string | null
           desc?: string | null
-          group_id?: string | null
+          trip_id?: string | null
           id?: number
           name: string
           trip_id?: number | null
@@ -63,7 +63,7 @@ export interface Database {
           created_at?: string
           created_by?: string | null
           desc?: string | null
-          group_id?: string | null
+          trip_id?: string | null
           id?: number
           name?: string
           trip_id?: number | null
@@ -77,10 +77,10 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "activities_group_id_fkey"
-            columns: ["group_id"]
+            foreignKeyName: "activities_trip_id_fkey"
+            columns: ["trip_id"]
             isOneToOne: false
-            referencedRelation: "groups"
+            referencedRelation: "trips"
             referencedColumns: ["id"]
           },
           {
@@ -131,7 +131,7 @@ export interface Database {
       changelogs: {
         Row: {
           content: string | null
-          group_id: string
+          trip_id: string
           id: string
           image: string | null
           publish_date: string | null
@@ -141,7 +141,7 @@ export interface Database {
         }
         Insert: {
           content?: string | null
-          group_id: string
+          trip_id: string
           id?: string
           image?: string | null
           publish_date?: string | null
@@ -151,7 +151,7 @@ export interface Database {
         }
         Update: {
           content?: string | null
-          group_id?: string
+          trip_id?: string
           id?: string
           image?: string | null
           publish_date?: string | null
@@ -161,43 +161,43 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "changelogs_group_id_fkey"
-            columns: ["group_id"]
+            foreignKeyName: "changelogs_trip_id_fkey"
+            columns: ["trip_id"]
             isOneToOne: false
-            referencedRelation: "groups"
+            referencedRelation: "trips"
             referencedColumns: ["id"]
           }
         ]
       }
-      group_members: {
+      trip_members: {
         Row: {
           created_at: string | null
-          group_id: string
+          trip_id: string
           id: string
           member_id: string
         }
         Insert: {
           created_at?: string | null
-          group_id: string
+          trip_id: string
           id?: string
           member_id: string
         }
         Update: {
           created_at?: string | null
-          group_id?: string
+          trip_id?: string
           id?: string
           member_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "group_members_group_id_fkey"
-            columns: ["group_id"]
+            foreignKeyName: "trip_members_trip_id_fkey"
+            columns: ["trip_id"]
             isOneToOne: false
-            referencedRelation: "groups"
+            referencedRelation: "trips"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "group_members_member_id_fkey"
+            foreignKeyName: "trip_members_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -205,7 +205,7 @@ export interface Database {
           }
         ]
       }
-      groups: {
+      trips: {
         Row: {
           created_at: string | null
           id: string
@@ -262,30 +262,30 @@ export interface Database {
         Row: {
           created_at: string
           end_datetime: string
-          group_id: string | null
+          trip_id: string | null
           id: number
           start_datetime: string
         }
         Insert: {
           created_at?: string
           end_datetime?: string
-          group_id?: string | null
+          trip_id?: string | null
           id?: number
           start_datetime?: string
         }
         Update: {
           created_at?: string
           end_datetime?: string
-          group_id?: string | null
+          trip_id?: string | null
           id?: number
           start_datetime?: string
         }
         Relationships: [
           {
-            foreignKeyName: "trips_group_id_fkey"
-            columns: ["group_id"]
+            foreignKeyName: "trips_trip_id_fkey"
+            columns: ["trip_id"]
             isOneToOne: false
-            referencedRelation: "groups"
+            referencedRelation: "trips"
             referencedColumns: ["id"]
           }
         ]

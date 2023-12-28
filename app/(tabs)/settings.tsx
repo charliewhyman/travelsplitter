@@ -6,7 +6,7 @@ import { Session } from '@supabase/supabase-js'
 import Avatar from '../../components/Avatar'
 import { View, TextInput, Text } from '../../components/Themed'
 import { router } from 'expo-router'
-import { fetchSession } from '../helpers/groupHandler'
+import { fetchSession } from '../helpers/tripHandler'
 
 export default function Account() {
   const [loading, setLoading] = useState<boolean>(true)

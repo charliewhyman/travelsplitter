@@ -6,13 +6,13 @@ import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
-import { fetchSession, getGroups, addGroup, Group } from "../helpers/groupHandler";
+import { fetchSession, getTrips, addTrip, Trip } from "../helpers/tripHandler";
 
 export default function ModalScreen() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [newGroupName, setNewGroupName] = useState<string>('');
+  const [newTripName, setNewTripName] = useState<string>('');
   const [session, setSession] = useState<Session | null>(null);
-  const [userGroups, setUserGroups] = useState<Group[]>([]);
+  const [userTrips, setUserTrips] = useState<Trip[]>([]);
 
   const isPresented = router.canGoBack();
 
@@ -21,7 +21,7 @@ export default function ModalScreen() {
       const sessionData = await fetchSession();
       if (sessionData) {
         setSession(sessionData);
-        await getGroups(sessionData, setUserGroups, setLoading);
+        await getTrips(sessionData, setUserTrips, setLoading);
       }
     }
 
@@ -29,22 +29,22 @@ export default function ModalScreen() {
   }, []);
 
  
-  async function handleNewGroupButtonClick() {
+  async function handleNewTripButtonClick() {
     if (!session) {
       Alert.alert('No user on the session!');
       return;
     }
 
-    if (userGroups.some(group => group.name === newGroupName)) {
-      Alert.alert(`Group "${newGroupName}" already exists!`);
-    } else if (newGroupName === '') {
-      Alert.alert('Enter a group name');
-    } else if (newGroupName.length >= 100) {
-      Alert.alert('Enter a group name of less than 100 characters');
+    if (userTrips.some(trip => trip.name === newTripName)) {
+      Alert.alert(`Trip "${newTripName}" already exists!`);
+    } else if (newTripName === '') {
+      Alert.alert('Enter a trip name');
+    } else if (newTripName.length >= 100) {
+      Alert.alert('Enter a trip name of less than 100 characters');
     } else {
-      await addGroup(session, newGroupName, setLoading);
-      // Reload groups after adding a new group
-      await getGroups(session, setUserGroups, setLoading);
+      await addTrip(session, newTripName, setLoading);
+      // Reload trips after adding a new trip
+      await getTrips(session, setUserTrips, setLoading);
     }
   }
 
@@ -52,10 +52,10 @@ export default function ModalScreen() {
     <>
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
-        <Text style={styles.title}>Create Group</Text>
+        <Text style={styles.title}>Create Trip</Text>
         <View style={styles.verticallySpaced}>
-        <TextInput placeholder="Group Name"  onChangeText={(text) => setNewGroupName(text)} lightColor="#eee" darkColor="#000" />
-        <Button title='+ Add Group' onPress={() => handleNewGroupButtonClick()}></Button>
+        <TextInput placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)} lightColor="#eee" darkColor="#000" />
+        <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
         </View>
         <View
           style={styles.separator}
