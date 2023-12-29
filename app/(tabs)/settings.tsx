@@ -4,7 +4,7 @@ import { StyleSheet, Alert } from 'react-native'
 import { Button } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
 import Avatar from '../../components/Avatar'
-import { View, TextInput, Text } from '../../components/Themed'
+import { View, TextInput, Text, Separator } from '../../components/Themed'
 import { router } from 'expo-router'
 import { fetchSession } from '../helpers/tripHandler'
 
@@ -15,6 +15,7 @@ export default function Account() {
   const [newPassword, setnewPassword] = useState<string | null>('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>('')
   const [session, setSession] = useState<Session | null>(null)
+  const [showResetPasswordFields, setShowResetPasswordFields] = useState<boolean>(false);
 
   useEffect(() => {
     getProfile()
@@ -116,10 +117,16 @@ async function updatePassword(nonce: string, newPassword: string) {
   if (error) throw error;
 }
 
+const handleResetPasswordPress = async () => {
+  await sendReauthNonce();
+
+  setShowResetPasswordFields(true);
+};
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, styles.flexCenter]}>
       <Avatar
-          size={200}
+          size={175}
           url={avatarUrl || ""}
           onUpload={(url: string) => {
             setAvatarUrl(url)
@@ -128,8 +135,8 @@ async function updatePassword(nonce: string, newPassword: string) {
         />
 
       <View style={styles.verticallySpaced}>
-      <Text lightColor="#000" darkColor="#eee">Username</Text>
-        <TextInput placeholder="Username" value={username?.toLowerCase() || ''} onChangeText={(text) => setUsername(text)} lightColor="#000" darkColor="#eee" />
+      <Text>Username</Text>
+        <TextInput style={styles.mt5} placeholder="Username" value={username?.toLowerCase() || ''} onChangeText={(text) => setUsername(text)}/>
       </View>
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
@@ -139,24 +146,26 @@ async function updatePassword(nonce: string, newPassword: string) {
           disabled={loading}
         />
       </View>
+      <Separator></Separator>
+      <View style={[styles.verticallySpaced]} >
+        <Button title="Reset Password" onPress={() => handleResetPasswordPress()} />
+      </View>
+
+      {showResetPasswordFields && (
+    
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <TextInput placeholder="One Time Passcode (OTP)"  onChangeText={(text) => setNonce(text)}/>
+
+      <TextInput style={styles.mt5} placeholder="New Password"  onChangeText={(text) => setnewPassword(text)}/>
+      <View style={[styles.verticallySpaced, styles.mt5]} >
+        <Button title="Update password" onPress={() => updatePassword( nonce || '', newPassword || '' )} />
+      </View>
+      </View>
+      )}
 
       <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
-
-      <View style={[styles.verticallySpaced, styles.mt20]} >
-        <Button title="Reset Password" onPress={() => sendReauthNonce()} />
-      </View>
-
-      <View style={styles.verticallySpaced}>
-      <TextInput placeholder="One Time Passcode (OTP)"  onChangeText={(text) => setNonce(text)} lightColor="#000" darkColor="#eee" />
-
-      <TextInput placeholder="New Password"  onChangeText={(text) => setnewPassword(text)} lightColor="#000" darkColor="#eee" />
-      </View>
-      <View style={[styles.verticallySpaced, styles.mt20]} >
-        <Button title="Update password" onPress={() => updatePassword( nonce || '', newPassword || '' )} />
-      </View>
-      
     </View>
 
     
@@ -176,7 +185,14 @@ const styles = StyleSheet.create({
   mt20: {
     marginTop: 20,
   },
+  mt5: {
+    marginTop: 5
+  },
   settingsInput: {
     color: 'green'
+  },
+  flexCenter: {
+    display: 'flex',
+    alignItems: 'center'
   }
 })
