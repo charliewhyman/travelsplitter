@@ -8,11 +8,9 @@ import { router } from 'expo-router';
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Separator style={styles.separator}/>
-        <Button title='+ Add Trip' onPress={() => router.push('/newTrip/newTrip')}></Button>
+        <Trips/>
         <Separator style={styles.separator}/>
-        <Trips />
+        <Button title='+ Add Trip' onPress={() => router.push('/newTrip/newTrip')}></Button>
       </View>
   );
 }

@@ -3,13 +3,19 @@ import { View, Text } from './Themed';
 import { Link, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
 import { fetchSession, Trip, getTrips } from '../app/helpers/tripHandler';
-import { Pressable } from 'react-native';
+import { Pressable, StyleSheet, useColorScheme } from 'react-native';
+import { Subtitle } from './StyledText';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import Colors from '../constants/Colors';
 
 export default function Trips() {
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [session, setSession] = useState<Session | null>(null)
   const navigation = useNavigation();
+  
+  const colorScheme = useColorScheme();
+  const iconColor = Colors[colorScheme ?? 'light'].tint
 
   useEffect(() => {
     async function fetchData() {
@@ -26,7 +32,7 @@ export default function Trips() {
   
   return (
     <View>
-      <Text>My Trips</Text>
+      <Subtitle>My Trips</Subtitle>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
@@ -36,7 +42,10 @@ export default function Trips() {
             params: {id: trip.id, slug: trip.slug, name: trip.name} }
           } asChild>
             <Pressable>
-              <Text>{trip.name}</Text>
+              <View style={styles.flexRow}>
+                <Ionicons name="airplane-outline" color={iconColor} size={25} style={styles.mr5} />
+                <Text>{trip.name}</Text>
+              </View>
             </Pressable>
           </Link>
         ))
@@ -44,3 +53,15 @@ export default function Trips() {
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  flexRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 3
+  },
+  mr5: {
+    marginRight: 5
+  }
+})
