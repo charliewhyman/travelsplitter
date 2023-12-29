@@ -1,6 +1,6 @@
 import { Alert, StyleSheet } from 'react-native';
 import {useLocalSearchParams, useNavigation } from 'expo-router';
-import { Text, TextInput, View } from '../../components/Themed';
+import { Separator, Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { addUserToTrip, checkUserExists, checkUserInTrip } from '../helpers/tripHandler';
@@ -53,7 +53,10 @@ export default function Trip() {
       <TripMembers></TripMembers>
       <View style={[styles.verticallySpaced, styles.mt20]} >
         <Text>Add Trip Member</Text>
-        <TextInput placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())} lightColor="#000" darkColor="#eee"></TextInput>
+        <TextInput style={styles.px10, styles.mt10} placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())}></TextInput>
+        <Separator
+          style={styles.separator}
+        />
           <Button title="Add user" onPress={() => handleAddMemberButtonClick(newUser)} disabled={loading}/>
         </View>
     </View>
@@ -79,5 +82,17 @@ export default function Trip() {
     mt20: {
       marginTop: 20,
     },
+    mt10: {
+      marginTop: 10,
+    },
+    px10: {
+      paddingLeft: 10,
+      paddingRight: 10
+    },
+    separator: {
+      marginVertical: 10,
+      height: 1,
+      width: "80%",
+    }
   });
   

@@ -52,14 +52,13 @@ export default function ModalScreen() {
     <>
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
-        <View style={styles.verticallySpaced}>
-        <TextInput placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
-        <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
-        </View>
+        <View style={[styles.verticallySpaced, styles.mt20]}>
+        <TextInput style={styles.px10} placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
         <Separator
           style={styles.separator}
         />
-
+        <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
+        </View>
         {/* Use a light status bar on iOS to account for the black space above the modal */}
         <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       </View>
@@ -78,13 +77,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 10,
     height: 1,
     width: "80%",
   },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
+    verticallySpaced: {
+      paddingLeft: 20,
+      paddingRight: 20,
+      paddingTop: 4,
+      paddingBottom: 4,
+      alignSelf: 'stretch',
+    },
+  px10: {
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  mt20: {
+    marginTop: 20,
   },
 });
