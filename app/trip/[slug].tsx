@@ -53,7 +53,7 @@ export default function Trip() {
       <TripMembers></TripMembers>
       <View style={[styles.verticallySpaced, styles.mt20]} >
         <Text>Add Trip Member</Text>
-        <TextInput style={styles.px10, styles.mt10} placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())}></TextInput>
+        <TextInput style={[styles.px10, styles.mt10]} placeholder='Username' onChangeText={(text) => setNewUser(text.toLowerCase())}></TextInput>
         <Separator
           style={styles.separator}
         />
