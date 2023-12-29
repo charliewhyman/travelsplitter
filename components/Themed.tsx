@@ -48,14 +48,16 @@ export function View(props: ViewProps) {
 export function TextInput(props: TextInputProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const placeholderTextColor = useThemeColor({ light: lightColor, dark: darkColor }, 'placeholderText');
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'inputBackground');
 
-  return <DefaultTextInput style={[{ color }, style]} {...otherProps} />;
+  return <DefaultTextInput style={[{ color, backgroundColor }, style]} placeholderTextColor={placeholderTextColor} {...otherProps} />;
 }
 
 
 export function Separator(props: ViewProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'separator');
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
   return <DefaultSeparator style={[{ backgroundColor }, style]} {...otherProps} />;
 }

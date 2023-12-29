@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { Alert, Platform, StyleSheet } from "react-native";
 
-import { Text, View, TextInput, Separator } from "../../components/Themed";
+import { View, TextInput, Separator } from "../../components/Themed";
 import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
@@ -53,7 +53,7 @@ export default function ModalScreen() {
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
         <View style={styles.verticallySpaced}>
-        <TextInput placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)} lightColor="#eee" darkColor="#000" />
+        <TextInput placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
         <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
         </View>
         <Separator
