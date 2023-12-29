@@ -1,3 +1,5 @@
+
+import { StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { View, Text } from './Themed';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -32,7 +34,7 @@ export default function TripMembers() {
   
   return (
     <View>
-      <Text>Trip Members</Text>
+      <Text style={styles.boldText}>Trip Members</Text>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
@@ -45,3 +47,9 @@ export default function TripMembers() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  boldText: {
+    fontWeight: 'bold'
+  }
+})

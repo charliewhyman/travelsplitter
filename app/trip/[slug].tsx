@@ -50,6 +50,9 @@ export default function Trip() {
     return (
     <View style={styles.container}>
       <Text style={styles.title}>{name}</Text>
+      <Separator
+          style={styles.separator}
+        />
       <TripMembers></TripMembers>
       <View style={[styles.verticallySpaced, styles.mt20]} >
         <Text>Add Trip Member</Text>
