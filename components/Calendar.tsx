@@ -1,11 +1,10 @@
 import { Moment } from 'moment';
 import React, { useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View
+  StyleSheet
 } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
+import { View, Text } from './Themed';
 
 export default function Calendar() {
   const [selectedStartDate, setSelectedStartDate] = useState<Moment | null>(null);

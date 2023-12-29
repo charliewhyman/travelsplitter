@@ -69,11 +69,6 @@ export default function Trip() {
       fontSize: 20,
       fontWeight: 'bold',
     },
-    separator: {
-      marginVertical: 30,
-      height: 1,
-      width: '80%',
-    },
     verticallySpaced: {
       paddingLeft: 20,
       paddingRight: 20,

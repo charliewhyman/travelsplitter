@@ -3,6 +3,7 @@ import { View, Text } from './Themed';
 import { Link, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
 import { fetchSession, Trip, getTrips } from '../app/helpers/tripHandler';
+import { Pressable } from 'react-native';
 
 export default function Trips() {
   const [loading, setLoading] = useState(true);
@@ -33,8 +34,10 @@ export default function Trips() {
           <Link key={index} href={{
             pathname: `/trip/${encodeURIComponent(trip.slug)}`,
             params: {id: trip.id, slug: trip.slug, name: trip.name} }
-          }>
-            {trip.name}
+          } asChild>
+            <Pressable>
+              <Text>{trip.name}</Text>
+            </Pressable>
           </Link>
         ))
       )}

@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { Alert, Platform, StyleSheet } from "react-native";
 
-import { Text, View, TextInput } from "../../components/Themed";
+import { Text, View, TextInput, Separator } from "../../components/Themed";
 import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
@@ -58,10 +58,8 @@ export default function ModalScreen() {
         <TextInput placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)} lightColor="#eee" darkColor="#000" />
         <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
         </View>
-        <View
+        <Separator
           style={styles.separator}
-          lightColor="#eee"
-          darkColor="rgba(255,255,255,0.1)"
         />
 
         {/* Use a light status bar on iOS to account for the black space above the modal */}
