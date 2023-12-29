@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useColorScheme } from 'react-native';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { CalendarList } from 'react-native-calendars';
 import Colors from '../constants/Colors';
 
-export default function CalendarComponent() {
+export default function CalendarListComponent() {
     const [selected, setSelected] = useState('');
 
     const colorScheme = useColorScheme();
     const textColor = Colors[colorScheme ?? 'light'].text
 
     return (
-      <Calendar
+      <CalendarList
       theme={{
         calendarBackground: 'transparent',
         monthTextColor: textColor,

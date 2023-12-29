@@ -1,14 +1,15 @@
 import { StatusBar } from "expo-status-bar";
 import { Alert, Platform, StyleSheet } from "react-native";
 
-import { View, TextInput, Separator } from "../../components/Themed";
+import { View, TextInput, Separator, Text } from "../../components/Themed";
 import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
 import { fetchSession, getTrips, addTrip, Trip } from "../helpers/tripHandler";
+import { Pressable } from "@bacons/react-views";
 
-export default function ModalScreen() {
+export default function NewTrip() {
   const [loading, setLoading] = useState<boolean>(true);
   const [newTripName, setNewTripName] = useState<string>('');
   const [session, setSession] = useState<Session | null>(null);
@@ -53,7 +54,12 @@ export default function ModalScreen() {
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
         <View style={[styles.verticallySpaced, styles.mt20]}>
-        <TextInput style={styles.px10} placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
+        <Link href="/CalendarModal" asChild>
+          <Pressable>
+            <Text>Choose trip dates</Text>
+          </Pressable>
+        </Link>
+        <TextInput style={[styles.px10, styles.mt20]} placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
         <Separator
           style={styles.separator}
         />

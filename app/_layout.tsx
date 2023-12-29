@@ -52,6 +52,7 @@ function RootLayoutNav() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Travelsplitter' }} />
           <Stack.Screen name="newTrip/newTrip" options={{ title: 'Add Trip' }} />
           <Stack.Screen name="trip/[slug]"/>
+          <Stack.Screen name="CalendarModal" options={{ presentation: 'modal' }}/>
         </Stack>
     </ThemeProvider>
   );
