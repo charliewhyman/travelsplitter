@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { addUserToTrip, checkUserExists, checkUserInTrip } from '../helpers/tripHandler';
 import TripMembers from '../../components/TripMembers';
+import CalendarComponent from '../../components/Calendar';
 
 type LocalSearchParams = {
   id: string,
@@ -24,6 +25,7 @@ export default function Trip() {
     
     React.useEffect(() => {      
           setSelectedTrip(id);
+          navigation.setOptions({ title: name})
         }, [navigation]);
 
         async function handleAddMemberButtonClick(username: string) {    
@@ -49,7 +51,6 @@ export default function Trip() {
       
     return (
     <View style={styles.container}>
-      <Text style={styles.title}>{name}</Text>
       <Separator
           style={styles.separator}
         />
@@ -72,7 +73,7 @@ export default function Trip() {
       justifyContent: 'center',
     },
     title: {
-      fontSize: 20,
+      fontSize: 25,
       fontWeight: 'bold',
     },
     verticallySpaced: {
