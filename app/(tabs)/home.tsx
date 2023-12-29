@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Separator, Text, View } from '../../components/Themed';
+import { View } from '../../components/Themed';
 import React from 'react';
 import Trips from '../../components/Trips';
 import { Button } from 'react-native-elements';
@@ -7,10 +7,9 @@ import { router } from 'expo-router';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
+    <View style={[styles.verticallySpaced, styles.container]}>
         <Trips/>
-        <Separator style={styles.separator}/>
-        <Button title='+ Add Trip' onPress={() => router.push('/newTrip/newTrip')}></Button>
+        <Button title='+ Add Trip' buttonStyle={styles.mt10} onPress={() => router.push('/newTrip/newTrip')}></Button>
       </View>
   );
 }
@@ -29,5 +28,15 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: '80%',
-  }
+  },
+  verticallySpaced: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 4,
+    paddingBottom: 4,
+    alignSelf: 'stretch',
+  },
+  mt10: {
+    marginTop: 10,
+  },
 });
