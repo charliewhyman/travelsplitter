@@ -1,5 +1,5 @@
 import { Link, router } from "expo-router";
-import CalendarListComponent from "../components/CalendarList";
+import CalendarComponent from "../components/Calendar";
 import { View } from "../components/Themed";
 import { StatusBar } from "expo-status-bar";
 
@@ -12,7 +12,7 @@ export default function CalendarModal() {
         {/* Use `../` as a simple way to navigate to the root. This is not analogous to "goBack". */}
         {!isPresented && <Link href="../">Dismiss</Link>}
         {/* Native modals have dark backgrounds on iOS, set the status bar to light content. */}
-        <CalendarListComponent/>
+        <CalendarComponent/>
         <StatusBar style="light" />
       </View>
     );
