@@ -2,7 +2,7 @@
 import { StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { View, Text } from './Themed';
-import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
 import { fetchSession, getTripMembers, User } from '../app/helpers/tripHandler';
 
