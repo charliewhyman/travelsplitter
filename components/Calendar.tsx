@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Colors from '../constants/Colors';
 import moment from 'moment';
-import { View, Text } from './Themed';
+import { View, Text, Separator } from './Themed';
 
 export type MarkedDatesType = {
   [date: string]: {
@@ -87,8 +87,18 @@ export default function CalendarComponent({
             markingType={'period'}
             markedDates={markedDates}
         />
+        <Separator style={styles.separator}/>
         <Text>Start date: {startDay}</Text>
         <Text>End Date: {endDay}</Text>
+        <Separator style={styles.separator}/>
       </View>
     );
 };
+
+const styles = StyleSheet.create({
+  separator: {
+    marginVertical: 10,
+    height: 1,
+    width: "80%",
+  },
+})

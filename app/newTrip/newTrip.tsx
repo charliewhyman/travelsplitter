@@ -7,13 +7,15 @@ import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
 import { fetchSession, getTrips, addTrip, Trip } from "../helpers/tripHandler";
-import { Pressable } from "@bacons/react-views";
+import CalendarComponent from "../../components/Calendar";
 
 export default function NewTrip() {
   const [loading, setLoading] = useState<boolean>(true);
   const [newTripName, setNewTripName] = useState<string>('');
   const [session, setSession] = useState<Session | null>(null);
   const [userTrips, setUserTrips] = useState<Trip[]>([]);
+  const [startDay, setStartDay] = useState<string | null>(null);
+  const [endDay, setEndDay] = useState<string | null>(null);
 
   const isPresented = router.canGoBack();
 
@@ -36,6 +38,9 @@ export default function NewTrip() {
       return;
     }
 
+    console.log(startDay)
+    console.log(endDay)
+
     if (userTrips.some(trip => trip.name === newTripName)) {
       Alert.alert(`Trip "${newTripName}" already exists!`);
     } else if (newTripName === '') {
@@ -54,11 +59,12 @@ export default function NewTrip() {
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
         <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Link href="/CalendarModal" asChild>
-          <Pressable>
-            <Text>Choose trip dates</Text>
-          </Pressable>
-        </Link>
+        <CalendarComponent
+          startDay={startDay}
+          setStartDay={setStartDay}
+          endDay={endDay}
+          setEndDay={setEndDay}
+        />
         <TextInput style={[styles.px10, styles.mt20]} placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
         <Separator
           style={styles.separator}
@@ -76,7 +82,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   title: {
     fontSize: 20,
