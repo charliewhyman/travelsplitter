@@ -95,7 +95,7 @@ export async function addTrip(
     let { data: trip_data, error: trip_error, status: trip_status } = await supabase
       .from('trips')
       .insert([
-        { name: newTripName, slug: slug },
+        { name: newTripName, slug: slug, start_datetime: startDate.toDateString(), end_datetime: endDate.toDateString() },
       ])
       .select();
 
