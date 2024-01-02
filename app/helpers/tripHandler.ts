@@ -210,6 +210,30 @@ export async function addTrip(
     }
   }
 
+  export async function deleteUserFromTrip(userId: string, tripId: string, setLoading: Dispatch<SetStateAction<boolean>>): Promise<void> {
+    try {
+      setLoading(true);
+  
+      let { data, error, status } = await supabase
+        .from('trip_members')
+        .delete()
+        .eq('trip_id', tripId)
+        .eq('user_id', userId);
+  
+      Alert.alert('User deleted!');
+  
+      if (error && status !== 406) {
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   export interface User {
     id: string;
