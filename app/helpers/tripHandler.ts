@@ -218,7 +218,7 @@ export async function addTrip(
         .from('trip_members')
         .delete()
         .eq('trip_id', tripId)
-        .eq('user_id', userId);
+        .eq('user_id', userId)
   
       Alert.alert('User deleted!');
   
