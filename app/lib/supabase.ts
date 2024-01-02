@@ -214,14 +214,14 @@ export interface Database {
         }
         Insert: {
           avatar_url?: string | null
-          email: string | null
+          email: string
           id: string
           updated_at?: string | null
           username: string
         }
         Update: {
           avatar_url?: string | null
-          email?: string | null
+          email?: string
           id?: string
           updated_at?: string | null
           username?: string
@@ -274,22 +274,31 @@ export interface Database {
       }
       trips: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
+          end_datetime: string
           id: string
           name: string
           slug: string
+          start_datetime: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
+          end_datetime: string
           id?: string
           name: string
           slug: string
+          start_datetime: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
+          end_datetime?: string
           id?: string
           name?: string
           slug?: string
+          start_datetime?: string
         }
         Relationships: []
       }
