@@ -16,10 +16,10 @@ export type MarkedDatesType = {
 };
 
 interface CalendarComponentProps {
-  startDay: string | null;
-  setStartDay: React.Dispatch<React.SetStateAction<string | null>>;
-  endDay: string | null;
-  setEndDay: React.Dispatch<React.SetStateAction<string | null>>;
+  startDay: Date | null;
+  setStartDay: React.Dispatch<React.SetStateAction<Date | null>>;
+  endDay: Date | null;
+  setEndDay: React.Dispatch<React.SetStateAction<Date | null>>;
 }
 
 
@@ -38,26 +38,32 @@ export default function CalendarComponent({
 
     function handleDayPress(day: { dateString: string; }) {
       
+      const selectedDate = moment(day.dateString).toDate();
+
       if (startDay && !endDay) {
         const date: MarkedDatesType = {}
-        for (const d = moment(startDay); d.isSameOrBefore(day.dateString); d.add(1, 'days')) {
+        for (const d = moment(startDay); d.isSameOrBefore(selectedDate); d.add(1, 'days')) {
           date[d.format('YYYY-MM-DD')] = {
             marked: true,
             color: 'black',
             textColor: 'white'
           };
 
-          if(d.format('YYYY-MM-DD') === startDay) date[d.format('YYYY-MM-DD')].startingDay = true;
-          if(d.format('YYYY-MM-DD') === day.dateString) date[d.format('YYYY-MM-DD')].endingDay = true;
+          if(d.format('YYYY-MM-DD') === moment(startDay).format('YYYY-MM-DD')) {
+            date[d.format('YYYY-MM-DD')].startingDay = true;
+          } 
+          if(d.format('YYYY-MM-DD') === day.dateString) {
+            date[d.format('YYYY-MM-DD')].endingDay = true;
+        }
         }
 
         setMarkedDates(date);
-        setEndDay(day.dateString);
+        setEndDay(selectedDate);
       } else {
-        setStartDay(day.dateString)
+        setStartDay(selectedDate)
         setEndDay(null)
         setMarkedDates({
-          [day.dateString]: {
+          [moment(selectedDate).format('YYYY-MM-DD')]: {
             marked: true,
             color: 'black',
             textColor: 'white',
@@ -87,9 +93,6 @@ export default function CalendarComponent({
             markingType={'period'}
             markedDates={markedDates}
         />
-        <Separator style={styles.separator}/>
-        <Text>Start date: {startDay}</Text>
-        <Text>End Date: {endDay}</Text>
         <Separator style={styles.separator}/>
       </View>
     );

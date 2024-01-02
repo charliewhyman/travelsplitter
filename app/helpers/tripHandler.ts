@@ -75,48 +75,50 @@ export async function getTrips(
       setLoading(false);
     }
   }
-  
-  export async function addTrip(
-    sessionData: AuthSession | null,
-    newTripName: string,
-    setLoading: Dispatch<SetStateAction<boolean>>
-  ) {
-    try {
-      setLoading(true);
-      if (!sessionData?.user) {
-        router.replace('/(auth)/login');
-        throw new Error('No user on the session!');
-      }
-  
-      let slug = newTripName.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-");
-  
-      let { data: trip_data, error: trip_error, status: trip_status } = await supabase
-        .from('trips')
+
+export async function addTrip(
+  sessionData: AuthSession | null,
+  newTripName: string,
+  setLoading: Dispatch<SetStateAction<boolean>>,
+  startDate: Date,
+  endDate: Date
+) {
+  try {
+    setLoading(true);
+    if (!sessionData?.user) {
+      router.replace('/(auth)/login');
+      throw new Error('No user on the session!');
+    }
+
+    let slug = newTripName.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-");
+
+    let { data: trip_data, error: trip_error, status: trip_status } = await supabase
+      .from('trips')
+      .insert([
+        { name: newTripName, slug: slug },
+      ])
+      .select();
+
+    if (trip_data) {
+      let { data: trip_members_data, error: trip_members_error, status: trip_members_status } = await supabase
+        .from('trip_members')
         .insert([
-          { name: newTripName, slug: slug },
+          { trip_id: trip_data[0].id, member_id: sessionData.user.id, start_datetime: startDate, end_datetime: endDate },
         ])
         .select();
-  
-      if (trip_data) {
-        let { data: trip_members_data, error: trip_members_error, status: trip_members_status } = await supabase
-          .from('trip_members')
-          .insert([
-            { trip_id: trip_data[0].id, member_id: sessionData.user.id },
-          ])
-          .select();
-      } else {
-        throw new Error('Trip not created!');
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-      Alert.alert(`Trip ${newTripName} successfully added.`);
-      router.replace('/');
+    } else {
+      throw new Error('Trip not created!');
     }
+  } catch (error) {
+    if (error instanceof Error) {
+      Alert.alert(error.message);
+    }
+  } finally {
+    setLoading(false);
+    Alert.alert(`Trip ${newTripName} successfully added.`);
+    router.replace('/');
   }
+}
 
   export async function checkUserExists(username: string, setLoading: Dispatch<SetStateAction<boolean>>): Promise<{ exists: boolean | null; userId?: string | null }> {
     try {

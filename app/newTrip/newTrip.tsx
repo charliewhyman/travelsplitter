@@ -1,21 +1,26 @@
 import { StatusBar } from "expo-status-bar";
 import { Alert, Platform, StyleSheet } from "react-native";
 
-import { View, TextInput, Separator, Text } from "../../components/Themed";
+import { View, TextInput, Separator } from "../../components/Themed";
 import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
 import { fetchSession, getTrips, addTrip, Trip } from "../helpers/tripHandler";
 import CalendarComponent from "../../components/Calendar";
+import moment from "moment";
 
 export default function NewTrip() {
   const [loading, setLoading] = useState<boolean>(true);
   const [newTripName, setNewTripName] = useState<string>('');
   const [session, setSession] = useState<Session | null>(null);
   const [userTrips, setUserTrips] = useState<Trip[]>([]);
-  const [startDay, setStartDay] = useState<string | null>(null);
-  const [endDay, setEndDay] = useState<string | null>(null);
+
+  const defaultStartDate = new Date();
+  const defaultEndDate = moment(defaultStartDate).add(7, 'days').toDate();
+
+  const [startDay, setStartDay] = useState<Date | null>( defaultStartDate );
+  const [endDay, setEndDay] = useState<Date | null>( defaultEndDate );
 
   const isPresented = router.canGoBack();
 
@@ -26,7 +31,7 @@ export default function NewTrip() {
         setSession(sessionData);
         await getTrips(sessionData, setUserTrips, setLoading);
       }
-    }
+    }    
 
     fetchData();
   }, []);
@@ -47,8 +52,10 @@ export default function NewTrip() {
       Alert.alert('Enter a trip name');
     } else if (newTripName.length >= 100) {
       Alert.alert('Enter a trip name of less than 100 characters');
+    } else if (startDay == null || endDay == null ) {
+      Alert.alert('Select a trip start and end date')
     } else {
-      await addTrip(session, newTripName, setLoading);
+      await addTrip(session, newTripName, setLoading, startDay, endDay);
       // Reload trips after adding a new trip
       await getTrips(session, setUserTrips, setLoading);
     }
