@@ -29,7 +29,7 @@ export interface Trip {
   slug: string;
 }
 
-export async function getTrips(
+export async function getUserTrips(
     sessionData: AuthSession | null,
     setUserTrips: Dispatch<SetStateAction<Trip[]>>,
     setLoading: Dispatch<SetStateAction<boolean>>

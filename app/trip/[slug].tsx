@@ -3,8 +3,11 @@ import {useLocalSearchParams, useNavigation } from 'expo-router';
 import { Separator, Text, TextInput, View } from '../../components/Themed';
 import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
-import { addUserToTrip, checkUserExists, checkUserInTrip } from '../helpers/tripHandler';
+import { addUserToTrip, checkUserExists, checkUserInTrip, fetchSession } from '../helpers/tripHandler';
 import TripMembers from '../../components/TripMembers';
+import CalendarComponent from '../../components/Calendar';
+import { getTripDates } from '../helpers/calendarHelper';
+import { Session } from '@supabase/supabase-js';
 
 type LocalSearchParams = {
   id: string,
@@ -15,6 +18,9 @@ type LocalSearchParams = {
 export default function Trip() {
     const { id, name, slug } = useLocalSearchParams<LocalSearchParams>();
     const navigation = useNavigation();
+
+    const [session, setSession] = useState<Session | null>(null)
+
     const [newUser, setNewUser] = useState<string >('');
     const [loading, setLoading] = useState(false);
     const [selectedTrip, setSelectedTrip]= useState<string | string[]>('');
@@ -22,8 +28,21 @@ export default function Trip() {
     const [userExists, setUserExists] = useState<{ exists: boolean | null; userId?: string | null }>({ exists: null });
     const [userInTrip, setUserInTrip] = useState<boolean | null>(null);
     
-    React.useEffect(() => {      
+    const [startDay, setStartDay] = useState<Date | null>(null);
+    const [endDay, setEndDay] = useState<Date | null>(null);
+
+    React.useEffect(() => { 
+      async function fetchData() {
+        const sessionData = await fetchSession();
+        setSession(sessionData);
+
+        if (sessionData) {
           setSelectedTrip(id);
+          await getTripDates(sessionData, id, setStartDay, setEndDay, setLoading)
+        }
+      }    
+      fetchData();    
+
           navigation.setOptions({ title: name})
         }, [navigation]);
 
@@ -50,6 +69,9 @@ export default function Trip() {
       
     return (
     <View style={styles.container}>
+        <Text>{startDay?.toDateString()}</Text>
+        <Text>{endDay?.toDateString()}</Text>
+
       <Separator
           style={styles.separator}
         />

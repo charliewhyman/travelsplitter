@@ -3,7 +3,7 @@ import { useColorScheme, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Colors from '../constants/Colors';
 import moment from 'moment';
-import { View, Text, Separator } from './Themed';
+import { View, Separator } from './Themed';
 
 export type MarkedDatesType = {
   [date: string]: {

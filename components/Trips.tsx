@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text } from './Themed';
 import { Link, useNavigation } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
-import { fetchSession, Trip, getTrips } from '../app/helpers/tripHandler';
+import { fetchSession, Trip, getUserTrips } from '../app/helpers/tripHandler';
 import { Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { Subtitle } from './StyledText';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -21,7 +21,7 @@ export default function Trips() {
     async function fetchData() {
       const session = await fetchSession();
       if (session) {
-        await getTrips(session, setTrips, setLoading);
+        await getUserTrips(session, setTrips, setLoading);
         setSession(session);
         setLoading(false);
       }

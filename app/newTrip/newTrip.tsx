@@ -6,7 +6,7 @@ import { Button } from "react-native-elements";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
-import { fetchSession, getTrips, addTrip, Trip } from "../helpers/tripHandler";
+import { fetchSession, getUserTrips, addTrip, Trip } from "../helpers/tripHandler";
 import CalendarComponent from "../../components/Calendar";
 import moment from "moment";
 
@@ -29,7 +29,7 @@ export default function NewTrip() {
       const sessionData = await fetchSession();
       if (sessionData) {
         setSession(sessionData);
-        await getTrips(sessionData, setUserTrips, setLoading);
+        await getUserTrips(sessionData, setUserTrips, setLoading);
       }
     }    
 
@@ -57,7 +57,7 @@ export default function NewTrip() {
     } else {
       await addTrip(session, newTripName, setLoading, startDay, endDay);
       // Reload trips after adding a new trip
-      await getTrips(session, setUserTrips, setLoading);
+      await getUserTrips(session, setUserTrips, setLoading);
     }
   }
 
