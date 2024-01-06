@@ -8,6 +8,7 @@ import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
 import { fetchSession, getUserTrips, addTrip, Trip } from "../helpers/tripHandler";
 import moment from "moment";
+import { DateTimePicker } from "../../components/DateTimePicker";
 
 export default function NewTrip() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -69,6 +70,8 @@ export default function NewTrip() {
         <Separator
           style={styles.separator}
         />
+        <DateTimePicker/>
+        <Separator/>
         <Button title='+ Add Trip' onPress={() => handleNewTripButtonClick()}></Button>
         </View>
         {/* Use a light status bar on iOS to account for the black space above the modal */}
