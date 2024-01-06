@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Link, router } from "expo-router";
 import { fetchSession, getUserTrips, addTrip, Trip } from "../helpers/tripHandler";
-import CalendarComponent from "../../components/Calendar";
 import moment from "moment";
 
 export default function NewTrip() {
@@ -66,12 +65,6 @@ export default function NewTrip() {
       <View style={styles.container}>
       {!isPresented && <Link href="../">Dismiss</Link>}
         <View style={[styles.verticallySpaced, styles.mt20]}>
-        <CalendarComponent
-          startDay={startDay}
-          setStartDay={setStartDay}
-          endDay={endDay}
-          setEndDay={setEndDay}
-        />
         <TextInput style={[styles.px10, styles.mt20]} placeholder="Trip Name"  onChangeText={(text) => setNewTripName(text)}/>
         <Separator
           style={styles.separator}

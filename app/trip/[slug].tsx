@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { Button } from 'react-native-elements';
 import { addUserToTrip, checkUserExists, checkUserInTrip, fetchSession } from '../helpers/tripHandler';
 import TripMembers from '../../components/TripMembers';
-import CalendarComponent from '../../components/Calendar';
 import { getTripDates } from '../helpers/calendarHelper';
 import { Session } from '@supabase/supabase-js';
 
